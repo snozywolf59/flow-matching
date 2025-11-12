@@ -1,0 +1,100 @@
+\documentclass[12pt,a4paper]{report}
+
+% ==========================
+% ======= Packages =========
+% ==========================
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}       % hỗ trợ tiếng Việt
+\usepackage[vietnamese]{babel}
+\usepackage{graphicx}          % chèn hình
+\usepackage{fancyhdr}          % header/footer
+\usepackage{titlesec}          % định dạng tiêu đề
+\usepackage{setspace}          % chỉnh dòng
+\usepackage{geometry}          % căn lề
+\usepackage{hyperref}          % liên kết
+\usepackage{tocloft}           % mục lục đẹp hơn
+
+% ==========================
+% ======= Cấu hình =========
+% ==========================
+\geometry{
+    a4paper,
+    left=3cm,
+    right=2cm,
+    top=2.5cm,
+    bottom=2.5cm,
+}
+
+\setstretch{1.3}               % giãn dòng 1.3
+\titleformat{\chapter}[hang]{\bfseries\Large}{\thechapter.}{1em}{} % định dạng tiêu đề chương
+\renewcommand{\baselinestretch}{1.3}
+\renewcommand{\contentsname}{MỤC LỤC}
+
+% ==========================
+% ======= TRANG BÌA =========
+% ==========================
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \includegraphics[width=3cm]{logo.png}\\[0.5cm] % thêm logo trường, đặt file logo.png cùng thư mục
+    {\bfseries\Large
+        ĐẠI HỌC QUỐC GIA HÀ NỘI\\
+        TRƯỜNG ĐẠI HỌC CÔNG NGHỆ\\[2cm]
+    }
+
+    {\bfseries\Huge BÁO CÁO TIỂU LUẬN}\\[1cm]
+    {\LARGE \textbf{Đề tài:} Ứng dụng Trí tuệ Nhân tạo trong Nhận dạng Ảnh}\\[2cm]
+
+    \begin{flushleft}
+        \textbf{Sinh viên thực hiện:} Nguyễn Văn A\\
+        \textbf{Mã sinh viên:} 22020001\\
+        \textbf{Lớp:} K67 - CNTT\\
+        \textbf{Giảng viên hướng dẫn:} TS. Trần Thị B\\[1cm]
+    \end{flushleft}
+
+    \vfill
+    {\large Hà Nội, \today}
+\end{titlepage}
+
+% ==========================
+% ======= MỤC LỤC ==========
+% ==========================
+\tableofcontents
+\newpage
+
+% ==========================
+% ======= NỘI DUNG =========
+% ==========================
+
+\chapter{Giới thiệu}
+Phần này giới thiệu tổng quan về đề tài, lý do chọn đề tài và mục tiêu nghiên cứu.
+
+\section{Lý do chọn đề tài}
+Viết nội dung tại đây...
+
+\section{Mục tiêu và phạm vi}
+Viết nội dung tại đây...
+
+\chapter{Cơ sở lý thuyết}
+Trình bày các khái niệm, mô hình, và công trình liên quan.
+
+\chapter{Phương pháp thực hiện}
+Trình bày quy trình, công cụ, dữ liệu và các bước thực hiện.
+
+\chapter{Kết quả và đánh giá}
+Mô tả các kết quả đạt được, bảng biểu, hình ảnh minh họa.
+
+\chapter{Kết luận và hướng phát triển}
+Tóm tắt nội dung chính và nêu hướng phát triển trong tương lai.
+
+% ==========================
+% ======= TÀI LIỆU THAM KHẢO ==========
+% ==========================
+\addcontentsline{toc}{chapter}{Tài liệu tham khảo}
+\begin{thebibliography}{99}
+    \bibitem{ref1} Nguyễn Văn C, *Giáo trình Trí tuệ nhân tạo*, NXB Đại học Quốc gia Hà Nội, 2023.
+    \bibitem{ref2} Ian Goodfellow et al., *Deep Learning*, MIT Press, 2016.
+\end{thebibliography}
+
+\end{document}
