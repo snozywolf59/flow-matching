@@ -1,3 +1,5 @@
+## Giới thiệu
+
 ## Generative Model
 
 Giả sử chúng ta có các mẫu $x_1, x2, …, x_n$ từ 1 phân phối $q(x)$, trong đó $q(x)$ là phân phối mà ta chưa biết. Từ các mẫu xi này, ta sẽ muốn tạo ra một mô hình học xác suất xấp xỉ với $q(x)$. Đây được gọi là generative model, với ý tưởng cốt lõi là cố gắng học quá trình sinh dữ liệu ngoài thực tế.
@@ -8,21 +10,41 @@ Generative model là một lĩnh vực quan trọng trong trí tuệ nhân tạo
 
 ## Normalizing Flows
 
-Normalizing Flows (NF) là một mô hình sinh xác suất (generative model) sử dụng một chuỗi các phép biến đổi khả nghịch (invertible transformations) để ánh xạ một phân phối xác suất dễ lây mẫu (gọi là phân phối cơ sở, $q_0$) thành một phân phối xác suất phức tạp hơn nhằm xấp xỉ phân phối kỳ vọng, là phân phối thực tế của dữ liệu ($p_1$).
+### Giới thiệu về Normalizing Flows
+
+Trong lĩnh vực mô hình hóa sinh xác suất (generative modeling) của học máy, một trong những thách thức lớn nhất là làm sao để học được một cách chính xác và hiệu quả phân phối dữ liệu phức tạp từ các mẫu huấn luyện. Các mô hình tự hồi quy (autoregressive models) hay variational autoencoders (VAEs) đều có những hạn chế riêng: hoặc tính toán likelihood chậm, hoặc chỉ ước lượng dưới (lower bound) của log-likelihood. Chính trong bối cảnh đó, **normalizing flows** đã nổi lên như một hướng tiếp cận thanh lịch và mạnh mẽ, cho phép tính toán **exact likelihood** đồng thời hỗ trợ cả việc lấy mẫu nhanh và biến đổi ngược một cách hiệu quả.
+
+Ý tưởng cốt lõi của normalizing flows rất đơn giản nhưng đẹp về mặt toán học: ta bắt đầu từ một phân phối cơ sở dễ lấy mẫu (thường là phân phối chuẩn đa biến), sau đó áp dụng một chuỗi các biến đổi khả nghịch (invertible/bijective) và khả vi (differentiable) để "đẩy" phân phối này về phía phân phối dữ liệu mục tiêu. Nhờ định lý đổi biến xác suất (change of variables formula), log-likelihood của dữ liệu có thể được tính chính xác qua tổng các Jacobian determinant của từng biến đổi – điều mà các mô hình khác không làm được một cách trực tiếp.
+
+Trong số các biến thể của normalizing flows, **continuous normalizing flows** (hay còn gọi là Continuous-time Normalizing Flows – CNFs, hoặc Neural ODE-based flows) đặc biệt đáng chú ý vì tính linh hoạt và khả năng biểu diễn cực kỳ cao. Thay vì xây dựng flow qua một chuỗi rời rạc các biến đổi, CNFs mô hình hóa flow như một đường đi liên tục trong không gian trạng thái, được định nghĩa bởi một trường vận tốc (velocity field) v(t, x) tham số hóa bởi mạng nơ-ron. Quá trình biến đổi từ phân phối nguồn đến phân phối đích chính là nghiệm của một phương trình vi phân thường (ODE):
 
 ### Ý tưởng (Idea)
 
-Ý tưởng cốt lõi của Normalizing Flows là sử dụng một hàm biến đổi khả vi liên tục và khả nghịch $\phi: \mathbb{R}^d \rightarrow \mathbb{R}^d$, được tham số hóa bằng mạng nơ-ron ($\phi_\theta$), để chuyển đổi mẫu từ một phân phối ban đầu đơn giản ($q_0$, ví dụ: phân phối Gaussian chuẩn $\mathcal{N}(0, I)$) thành các mẫu thuộc phân phối phức tạp của dữ liệu ($p_1$).
-<br>
+Ý tưởng cốt lõi của Normalizing Flows là thực hiện một hàm biến đổi mẫu từ phân phối xác suất nguồn $p_0$ thành mẫu tương ứng thuộc về phân phối xác suất đích $p_1$. ta ký hiệu $\phi: \mathbb{R}^d \to \mathbb{R}^d$ là hàm số biến đổi phần tử thuộc $\mathbb{R}^d$.
+
+$$
+\begin{equation*}
+\begin{split}
+x &\sim p_0 \\
+y &= \phi(x),
+\end{split}
+\end{equation*}
+$$
+
+Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. Như vậy ta cần tìm cách tối ưu hóa hàm $\phi$ này.
+
+### Phương pháp
+
+
 Mục tiêu là tối ưu hóa các tham số $\theta$ của hàm biến đổi $\phi_\theta$ sao cho phân phối $p_1$ được tạo ra phân phối kỳ vọng sát nhất với phân phối dữ liệu thực tế.
 
 ### Cơ sở toán học
 
-Cơ sở toán học của Normalizing Flows là **Change-of-Variable Formula** cho mật độ xác suất.
+Cơ sở toán học của Normalizing Flows là công thức **Change-of-Variable Formula** cho mật độ xác suất. Công thức này phát biểu như sau:
 
-Nếu $x \sim q_0$ và $y = \phi(x)$, mật độ xác suất của $y$, ký hiệu là $p_1(y)$, được tính như sau:
+Nếu $x \sim p_0$ và $y = \phi(x)$, mật độ xác suất của $y$, ký hiệu là $p_1(y)$, được tính như sau:
 
-$$p_1(y) = q_0(\phi^{-1}(y)) \left|\det\left[\frac{\partial \phi^{-1}}{\partial y}(y)\right]\right|$$
+$$p_1(y) = p_0(\phi^{-1}(y)) \left|\det\left[\frac{\partial \phi^{-1}}{\partial y}(y)\right]\right|$$
 
 Trong đó:
 
@@ -32,17 +54,17 @@ Trong đó:
 
 Để dễ tính toán hơn, công thức thường được viết lại dưới dạng:
 
-$$p_1(y) = \frac{q_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y)$$
+$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y)$$
 
 ### learning Params by maximum likelyhood
 
-Phương pháp tiêu chuẩn để đào tạo các tham số $\theta$ của một Normalizing Flow $\phi_\theta$ là sử dụng **Ước lượng Khả năng Hợp lý Cực đại (Maximum Likelihood Estimation - MLE)**.
+Một cách tiếp cận trong việc tối ưu các tham số $\theta$ của một Normalizing Flow $\phi_\theta$ là xem xét việc tối đa hóa xác suất của dữ liệu với mô hình, hay còn gọi là Maximum Likelihood.
 
 - **Mục tiêu:** Tối đa hóa xác suất mà mô hình gán cho dữ liệu huấn luyện $\mathcal{D}$.
   $$\textrm{argmax}_{\theta}\ \ \mathbb{E}_{x\sim \mathcal{D}} [\log p_1(x)]$$
   trong đó $p_1(x)$ là mật độ xác suất do flow $\phi_\theta$ tạo ra.
 - **Tính toán:** $\log p_1(x)$ được tính bằng công thức đổi biến (đã đề cập ở phần trước):
-  $$\log p_1(y) = \log q_0(\phi^{-1}(y)) - \log \left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|$$
+  $$\log p_1(y) = \log p_0(\phi^{-1}(y)) - \log \left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|$$
 - **Thách thức:** Để tối ưu hóa hàm mục tiêu này, mô hình phải giải quyết ba vấn đề kỹ thuật lớn:
   1.  Đảm bảo hàm biến đổi $\phi_\theta$ khả nghịch (Invertible).
   2.  Có thể tính toán hàm ngược $\phi^{-1}$ một cách hiệu quả.
@@ -108,7 +130,7 @@ $$\textrm{argmax}_{\theta}\ \ \mathbb{E}_{x\sim \mathcal{D}} [\log p_1(x)]$$
 
 Trong đó, $\log p_1(x)$ được tính bằng Công thức Đổi biến (đối với flows rời rạc) hoặc công thức tích phân độ phân kỳ (đối với CNFs).
 
-#### 
+####
 
 - Flows Rời rạc
 - CNFs
