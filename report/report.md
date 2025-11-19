@@ -31,12 +31,7 @@ y &= \phi(x),
 \end{equation*}
 $$
 
-Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. Như vậy ta cần tìm cách tối ưu hóa hàm $\phi$ này.
-
-### Phương pháp
-
-
-Mục tiêu là tối ưu hóa các tham số $\theta$ của hàm biến đổi $\phi_\theta$ sao cho phân phối $p_1$ được tạo ra phân phối kỳ vọng sát nhất với phân phối dữ liệu thực tế.
+Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. Mục tiêu là tối ưu hóa các tham số $\theta$ của hàm biến đổi $\phi_\theta$ sao cho phân phối $p_1$ được tạo ra phân phối kỳ vọng sát nhất với phân phối dữ liệu thực tế.
 
 ### Cơ sở toán học
 
@@ -44,15 +39,21 @@ Cơ sở toán học của Normalizing Flows là công thức **Change-of-Variab
 
 Nếu $x \sim p_0$ và $y = \phi(x)$, mật độ xác suất của $y$, ký hiệu là $p_1(y)$, được tính như sau:
 
-$$p_1(y) = p_0(\phi^{-1}(y)) \left|\det\left[\frac{\partial \phi^{-1}}{\partial y}(y)\right]\right|$$
+$$p_1(y) = p_0(\phi^{-1}(y)) \left|\det\left[\frac{\partial \phi^{-1}}{\partial y}(y)\right]\right|    (1)$$
 
 Trong đó:
 
-1.  $\phi(x)$ là hàm biến đổi phân phối cơ sở thành phân phối kỳ vọng. Hàm này khả vi liên tục và khả nghịch.
-2.  $\frac{\partial \phi^{-1}}{\partial y}(y)$ là **Ma trận Jacobian** của ánh xạ ngược $\phi^{-1}$.
-3.  $\left|\det\left[\cdot\right]\right|$ là giá trị tuyệt đối của định thức Jacobian.
+1.  $\phi(x)$ là hàm biến đổi phân phối nguồn thành phân phối đích.
+2.  $\phi^{-1}$ là hàm ngược lại với hàm $\phi$, biến đổi mẫu từ phân phối đích về lại mẫu tương ứng ở phân phối nguồn.
+3.  $\frac{\partial \phi^{-1}}{\partial y}(y)$ là **Ma trận Jacobian** của ánh xạ ngược $\phi^{-1}$.
+4.  $\left|\det\left[\cdot\right]\right|$ là giá trị tuyệt đối của định thức Jacobian.
 
-Để dễ tính toán hơn, công thức thường được viết lại dưới dạng:
+Như vậy, ta có một số nhận xét về hàm $\phi$ như sau:
+
+- Hàm $\phi$ phải là hàm khả vi liên tục
+- Hàm $\phi$ phải khả nghịch
+
+Để dễ tính toán hơn, công thức $(1)$ có thể được viết lại dưới dạng:
 
 $$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y)$$
 
