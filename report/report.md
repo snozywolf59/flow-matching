@@ -35,7 +35,7 @@ Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. M
 
 ### 2.4. Cơ sở toán học
 
-#### 2.4.1. Cơ sở về luật Biến đối phân phối (Change of Variables Rule)
+#### 2.4.1. Cơ sở về định lý Biến đối biến (Change of Variables Theorem)
 
 a. Giả thiết và định nghĩa
 
@@ -44,6 +44,7 @@ Giả sử $x$ là một biến ngẫu nhiên liên tục trong không gian $\ma
 b. Nguyên lý bảo toàn xác suất
 
 Theo định nghĩa của xác suất, xác suất để $y$ rơi vào một tập hợp $S \subset \mathbb{R}^d$ phải bằng xác suất để $x$ rơi vào tập hợp nguồn tương ứng $\phi^{-1}(S)$. Với mọi tập đo được $S$, ta có:$$\int_{S} p_1(y) \, dy = P(y \in S) = P(x \in \phi^{-1}(S)) = \int_{\phi^{-1}(S)} p_0(x) \, dx \space (2.1) $$
+
 c. Định lý đổi biến trong tích phân (Change of Variables Theorem)
 
 Phát biểu: Cho tích phân $\int_{R} f(x) dx$. Nếu ta thực hiện phép đổi biến $x = \psi(y)$ (trong trường hợp này $\psi = \phi^{-1}$), tích phân sẽ được viết lại theo biến $y$ như sau:
@@ -52,7 +53,10 @@ Trong đó:
 
 - $R = \phi^{-1}(S)$ là vùng tích phân theo $x$.
 - $\psi^{-1}(R) = \phi(R) = S$ là vùng tích phân theo $y$.
-- $J_{\psi}(y) = \frac{\partial \phi^{-1}}{\partial y}(y)$ là ma trận Jacobian của hàm ngược.
+- $J_{\psi}(y)$ là ma trận Jacobian của hàm ngược.
+
+Ta lại có:
+$$ J{\psi}(y) = J{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
 
 Áp dụng định lý này vào vế phải của phương trình bảo toàn xác suất:
 $$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy \space (2.2)$$
@@ -60,8 +64,8 @@ $$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \lef
 Kết hợp (2.1) và (2.2) lại, ta được phương trình sau:
 $$\int_{S} p_1(y) \, dy = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy$$
 
-Vì đẳng thức này đúng với mọi tập $S$ đo được, nên hàm dưới dấu tích phân phải bằng nhau. Do đó ta thu được đẳng thứcn cuối cùng sau:
-$$ p_1(y) = p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| $$
+Vì đẳng thức này đúng với mọi tập $S$ đo được, nên hàm dưới dấu tích phân phải bằng nhau. Do đó ta thu được đẳng thức cuối cùng sau:
+$$ p_1(y) = p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \space (2.3) $$
 
 Trong đó:
 
@@ -70,28 +74,13 @@ Trong đó:
 3.  $\frac{\partial \phi^{-1}}{\partial y}(y)$ là **Ma trận Jacobian** của ánh xạ ngược $\phi^{-1}$.
 4.  $\left|\det\left[\cdot\right]\right|$ là giá trị tuyệt đối của định thức Jacobian.
 
-Như vậy, ta có một số nhận xét về hàm $\phi$ như sau:
+Để dễ tính toán hơn, công thức $(2.3)$ có thể được viết lại dưới dạng:
 
-- Hàm $\phi$ phải là hàm khả vi liên tục
-- Hàm $\phi$ phải khả nghịch
+$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y) \space (2.4)$$
 
-Để dễ tính toán hơn, công thức $(1)$ có thể được viết lại dưới dạng:
+#### 2.4.2. Maximum Likelihood Estimation (MLE)
 
-$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y)$$
-
-### learning Params by maximum likelyhood
-
-Một cách tiếp cận trong việc tối ưu các tham số $\theta$ của một Normalizing Flow $\phi_\theta$ là xem xét việc tối đa hóa xác suất của dữ liệu với mô hình, hay còn gọi là Maximum Likelihood.
-
-- **Mục tiêu:** Tối đa hóa xác suất mà mô hình gán cho dữ liệu huấn luyện $\mathcal{D}$.
-  $$\textrm{argmax}_{\theta}\ \ \mathbb{E}_{x\sim \mathcal{D}} [\log p_1(x)]$$
-  trong đó $p_1(x)$ là mật độ xác suất do flow $\phi_\theta$ tạo ra.
-- **Tính toán:** $\log p_1(x)$ được tính bằng công thức đổi biến (đã đề cập ở phần trước):
-  $$\log p_1(y) = \log p_0(\phi^{-1}(y)) - \log \left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|$$
-- **Thách thức:** Để tối ưu hóa hàm mục tiêu này, mô hình phải giải quyết ba vấn đề kỹ thuật lớn:
-  1.  Đảm bảo hàm biến đổi $\phi_\theta$ khả nghịch (Invertible).
-  2.  Có thể tính toán hàm ngược $\phi^{-1}$ một cách hiệu quả.
-  3.  Có thể tính toán định thức Jacobian $\det[\partial \phi/\partial x]$.
+a. Khái niệm
 
 ### Residual Flows
 
