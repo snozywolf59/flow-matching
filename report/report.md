@@ -101,27 +101,37 @@ Trong thực tế tính toán, hàm $L(\theta)$ thường là tích của nhiề
 Để khắc phục, ta thường tối đa hóa hàm Log-Likelihood, ký hiệu là $\mathcal{L}(\theta)$. Vì hàm Logarit $\log(\cdot)$ là tăng đơn điệu, việc tối đa hóa $L(\theta)$ hoàn toàn tương đương với việc tối đa hóa $\mathcal{L}(\theta)$.
 
 Hàm Log-Likelihood được tính bằng:
-$$\mathcal{L}(\theta) = \log L(\theta) = \log \left( \prod_{i=1}^N p(x^{(i)}|\theta) \right)$$
-Áp dụng quy tắc Logarit của một tích $\log(a \cdot b) = \log a + \log b$, ta biến tích thành tổng:$$\mathcal{L}(\theta) = \sum_{i=1}^N \log p(x^{(i)}|\theta)$$
+$$\mathcal{L}(\theta) = \log L(\theta) = \log \left( \prod_{i=1}^N p(x_i|\theta) \right)$$
+Áp dụng quy tắc Logarit của một tích $\log(a \cdot b) = \log a + \log b$, ta biến tích thành tổng:
+$$\mathcal{L}(\theta) = \sum_{i=1}^N \log p(x_i|\theta)~~~(2.6)$$
 
 
 ### 2.4. Residual Flows
 
-Residual Flow là một lớp các hàm biến đổi $\phi_k$ được thiết kế để giải quyết vấn đề tính toán Jacobian một cách hiệu quả ...
+Quay trở về bài toán về bài toán lúc đầu, ta cố gắng tìm hàm số $\phi(x)$ từ các mẫu từ phân phối sẵn có với mong muốn tạo ra được $y$ từ phân phối mong muốn.
+
+Cách tiếp cận đầu tiên là Residual Flow. Residual Flow thực hiện một chuỗi gồm $K$ hàm biến đổi liên tiếp nhau.
 
 Một Residual Flow có dạng:
+$$\phi = \phi_K \circ \ldots \circ \phi_2 \circ \phi_1.$$
+
+Với $\phi_k(x)$ có dạng:
 $$\phi_k(x) = x + \delta \ u_k(x)$$
 Trong đó:
 
 - $x$ là đầu vào.
-- $u_k(x)$ là một hàm dư (residual connection), thường được tham số hóa bằng mạng nơ-ron.
+- $u_k(x)$ là một hàm dịch chuyển, thường được tham số hóa bằng mạng nơ-ron.
 - $\delta$ là một hằng số nhỏ dương.
 
-Flow nhận được:
-$$\phi = \phi_K \circ \ldots \circ \phi_2 \circ \phi_1.$$
+Khi đó, $x$ sẽ được biến đổi dưới dạng chuỗi:
+$$ x \xrightarrow{\phi_{1}} x_1  \xrightarrow{\phi_{2}} x_2 \xrightarrow{} ... \xrightarrow{\phi_{K}} x_K = y $$
 
-Flow trên có likelihôd được tính bởi tổng likelihood của các flow thành phần:
-$$\log q(y) = \log p(\phi^{-1}(y)) + \sum_{k=1}^K \log \det\left[\frac{\partial \phi_k^{-1}}{\partial x_{k+1}}(x_{k+1})\right]$$
+Do $x_{k} = \phi_k(x_{k-1})$ nên áp dụng công thức (2.3) và (2.6), ta được hàm Log-Likelihood khi dịch $x_{k-1} \to x_k$: 
+$$\mathcal{L_k(\theta)} = \log p_k(x_{k}|\theta) = \log( p_{k-1}(x_{k-1}) \left| \det \left[ \frac{\partial \phi^{-1}_{k-1}}{\partial x_k}(x_k) \right] \right| )$$
+
+Suy ra, residual flow có likelihood được tính bởi tổng likelihood của các flow thành phần:
+$$ \mathcal{L(\theta)} = \log p_{K}(y) = \log p_0(x) + \sum_{k=1}^K \log \det\left[\frac{\partial \phi_k^{-1}}{\partial x_{k+1}}(x_{k+1})\right]$$
+
 
 ### 2.5. Continuous Normalizing Flows (CNFs): Sử dụng ODE để mô tả flow
 
