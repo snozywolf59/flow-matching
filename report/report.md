@@ -1,16 +1,14 @@
 ## 1. Giới thiệu
 
-## 2. Normalizing Flows
+Giả sử chúng ta có các mẫu $x_1, x_2, …, x_n$ từ 1 phân phối $q(x)$, trong đó $q(x)$ là phân phối mà ta chưa biết. Từ các mẫu xi này, ta sẽ muốn tạo ra một mô hình học xác suất xấp xỉ với $q(x)$. Đây được gọi là generative model, với ý tưởng cốt lõi là cố gắng học quá trình sinh dữ liệu ngoài thực tế.
 
-### 2.1. Generative Model
-
-Giả sử chúng ta có các mẫu $x_1, x2, …, x_n$ từ 1 phân phối $q(x)$, trong đó $q(x)$ là phân phối mà ta chưa biết. Từ các mẫu xi này, ta sẽ muốn tạo ra một mô hình học xác suất xấp xỉ với $q(x)$. Đây được gọi là generative model, với ý tưởng cốt lõi là cố gắng học quá trình sinh dữ liệu ngoài thực tế.
-<br>
 Generative model là một lĩnh vực quan trọng trong trí tuệ nhân tạo và học máy, tập trung vào việc xây dựng các mô hình có khả năng tạo ra dữ liệu mới dựa trên phân phối của dữ liệu huấn luyện. Các kỹ thuật phổ biến bao gồm Generative Adversarial Networks (GANs), nơi một mạng generator tạo dữ liệu giả và một mạng discriminator phân biệt thật-giả để cải thiện chất lượng; Variational Autoencoders (VAEs) sử dụng không gian ẩn để tái tạo dữ liệu; và gần đây là diffusion models, dần dần thêm nhiễu rồi loại bỏ để sinh mẫu mới. Những mô hình này giúp vượt qua hạn chế của dữ liệu hạn chế, mở ra tiềm năng sáng tạo vô hạn.
-<br>
+
 Ứng dụng của generative modeling ngày càng rộng rãi, từ lĩnh vực hình ảnh như tạo ảnh thực tế (ví dụ: Stable Diffusion) đến văn bản (như GPT models cho viết lách tự động), âm nhạc (tạo giai điệu mới), và y tế (mô phỏng hình ảnh MRI để hỗ trợ chẩn đoán). Trong khoa học dữ liệu, chúng hỗ trợ tăng cường dữ liệu (data augmentation) để cải thiện mô hình học máy. Tuy nhiên, thách thức lớn là kiểm soát chất lượng đầu ra và tránh lạm dụng, như tạo deepfakes. Generative modeling không chỉ thúc đẩy sáng tạo mà còn định hình tương lai của AI, với tiềm năng ứng dụng trong thiết kế sản phẩm, giải trí và nghiên cứu khoa học.
 
-### 2.2. Giới thiệu về Normalizing Flows
+## 2. Continious Normalizing Flows
+
+### 2.1. Giới thiệu về Normalizing Flows
 
 Trong lĩnh vực mô hình hóa sinh xác suất (generative modeling) của học máy, một trong những thách thức lớn nhất là làm sao để học được một cách chính xác và hiệu quả phân phối dữ liệu phức tạp từ các mẫu huấn luyện. Các mô hình tự hồi quy (autoregressive models) hay variational autoencoders (VAEs) đều có những hạn chế riêng: hoặc tính toán likelihood chậm, hoặc chỉ ước lượng dưới (lower bound) của log-likelihood. Chính trong bối cảnh đó, **normalizing flows** đã nổi lên như một hướng tiếp cận thanh lịch và mạnh mẽ, cho phép tính toán **exact likelihood** đồng thời hỗ trợ cả việc lấy mẫu nhanh và biến đổi ngược một cách hiệu quả.
 
@@ -18,7 +16,7 @@ Trong lĩnh vực mô hình hóa sinh xác suất (generative modeling) của h�
 
 Trong số các biến thể của normalizing flows, **continuous normalizing flows** (hay còn gọi là Continuous-time Normalizing Flows – CNFs, hoặc Neural ODE-based flows) đặc biệt đáng chú ý vì tính linh hoạt và khả năng biểu diễn cực kỳ cao. Thay vì xây dựng flow qua một chuỗi rời rạc các biến đổi, CNFs mô hình hóa flow như một đường đi liên tục trong không gian trạng thái, được định nghĩa bởi một trường vận tốc (velocity field) u(t, x) tham số hóa bởi mạng nơ-ron. Quá trình biến đổi từ phân phối nguồn đến phân phối đích chính là nghiệm của một phương trình vi phân thường (ODE):
 
-### 2.3. Ý tưởng và định nghĩa bài toán
+### 2.2. Ý tưởng và định nghĩa bài toán
 
 Ý tưởng cốt lõi của Normalizing Flows là thực hiện một hàm biến đổi mẫu từ phân phối xác suất nguồn $p_0$ thành mẫu tương ứng thuộc về phân phối xác suất đích $p_1$. ta ký hiệu $\phi: \mathbb{R}^d \to \mathbb{R}^d$ là hàm số biến đổi phần tử thuộc $\mathbb{R}^d$.
 
@@ -33,9 +31,9 @@ $$
 
 Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. Mục tiêu là tối ưu hóa các tham số $\theta$ của hàm biến đổi $\phi_\theta$ sao cho phân phối $p_1$ được tạo ra phân phối kỳ vọng sát nhất với phân phối dữ liệu thực tế.
 
-### 2.4. Cơ sở toán học
+### 2.3. Cơ sở toán học
 
-#### 2.4.1. Cơ sở về định lý Biến đối biến (Change of Variables Theorem)
+#### 2.3.1. Cơ sở về định lý Biến đối biến (Change of Variables Theorem)
 
 a. Giả thiết và định nghĩa
 
@@ -43,7 +41,7 @@ Giả sử $x$ là một biến ngẫu nhiên liên tục trong không gian $\ma
 
 b. Nguyên lý bảo toàn xác suất
 
-Theo định nghĩa của xác suất, xác suất để $y$ rơi vào một tập hợp $S \subset \mathbb{R}^d$ phải bằng xác suất để $x$ rơi vào tập hợp nguồn tương ứng $\phi^{-1}(S)$. Với mọi tập đo được $S$, ta có:$$\int_{S} p_1(y) \, dy = P(y \in S) = P(x \in \phi^{-1}(S)) = \int_{\phi^{-1}(S)} p_0(x) \, dx \space (2.1) $$
+Theo định nghĩa của xác suất, xác suất để $y$ rơi vào một tập hợp $S \subset \mathbb{R}^d$ phải bằng xác suất để $x$ rơi vào tập hợp nguồn tương ứng $\phi^{-1}(S)$. Với mọi tập đo được $S$, ta có:$$\int_{S} p_1(y) \, dy = P(y \in S) = P(x \in \phi^{-1}(S)) = \int_{\phi^{-1}(S)} p_0(x) \, dx ~~~ (2.1) $$
 
 c. Định lý đổi biến trong tích phân (Change of Variables Theorem)
 
@@ -56,16 +54,16 @@ Trong đó:
 - $J_{\psi}(y)$ là ma trận Jacobian của hàm ngược.
 
 Ta lại có:
-$$ J{\psi}(y) = J{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
+$$ J_{\psi}(y) = J_{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
 
 Áp dụng định lý này vào vế phải của phương trình bảo toàn xác suất:
-$$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy \space (2.2)$$
+$$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy ~~~ (2.2)$$
 
 Kết hợp (2.1) và (2.2) lại, ta được phương trình sau:
 $$\int_{S} p_1(y) \, dy = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy$$
 
 Vì đẳng thức này đúng với mọi tập $S$ đo được, nên hàm dưới dấu tích phân phải bằng nhau. Do đó ta thu được đẳng thức cuối cùng sau:
-$$ p_1(y) = p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \space (2.3) $$
+$$ p_1(y) = p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| ~~~ (2.3) $$
 
 Trong đó:
 
@@ -76,13 +74,38 @@ Trong đó:
 
 Để dễ tính toán hơn, công thức $(2.3)$ có thể được viết lại dưới dạng:
 
-$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y) \space (2.4)$$
+$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y) ~~~ (2.4)$$
 
-#### 2.4.2. Maximum Likelihood Estimation (MLE)
+#### 2.3.2. Maximum Likelihood Estimation (MLE)
 
-a. Khái niệm
+a\. Khái niệm
 
-### Residual Flows
+MLE là phương pháp thống kê được sử dụng để dự đoán các tham số của mô hình, dựa trên dữ liệu sẵn có. Mục tiêu của phương pháp này là tìm bộ tham số được coi là tối ưu, sao cho tối đa hóa khả năng mà mô hình ứng với bộ tham số đó sinh ra các điểm trong dữ liệu.
+
+b\. Likelihood Function
+
+Giả sử ta có các điểm dữ liệu $D = {x_1, x_2, ..., x_n}$ và đã biết các điểm dữ liệu này tuân theo phân phối xác suất nào đó có thể mô tả bằng tham số $\theta$.
+
+MLE có công việc là sẽ tìm ra $\theta$ sao cho xác suất sau đây là giá trị lớn nhất:
+$$ \theta = \max_{\theta} p(\mathbf{x_1}, \dots, \mathbf{x_n} | \theta) ~~~~ (2.5)$$
+
+Với giả định là các điểm các biến cố đôi một độc lập với nhau, nên xác suất để thu được tập quan sát $D$ bằng tích của xác suất các điểm riêng lẻ.
+
+Như vậy, hàm Likelihood (Likelihood Function), được định nghĩa là $L(\theta)$ là hàm của tham số $\theta$, biểu thị xác suất của dữ liệu $D$ được tạo ra bởi mô hình dưới tham số $\theta$, được tính với công thức như sau:
+$$ L(\theta) = P(D|\theta) = \prod_{i=1}^n p(x_i|\theta) $$
+
+c\. Log Likelihood Function
+
+Trong thực tế tính toán, hàm $L(\theta)$ thường là tích của nhiều số xác suất rất nhỏ (do xác suất nằm trong $[0, 1]$). Điều này dễ dẫn đến lỗi underflow số học trong máy tính (kết quả bằng 0). 
+
+Để khắc phục, ta thường tối đa hóa hàm Log-Likelihood, ký hiệu là $\mathcal{L}(\theta)$. Vì hàm Logarit $\log(\cdot)$ là tăng đơn điệu, việc tối đa hóa $L(\theta)$ hoàn toàn tương đương với việc tối đa hóa $\mathcal{L}(\theta)$.
+
+Hàm Log-Likelihood được tính bằng:
+$$\mathcal{L}(\theta) = \log L(\theta) = \log \left( \prod_{i=1}^N p(x^{(i)}|\theta) \right)$$
+Áp dụng quy tắc Logarit của một tích $\log(a \cdot b) = \log a + \log b$, ta biến tích thành tổng:$$\mathcal{L}(\theta) = \sum_{i=1}^N \log p(x^{(i)}|\theta)$$
+
+
+### 2.4. Residual Flows
 
 Residual Flow là một lớp các hàm biến đổi $\phi_k$ được thiết kế để giải quyết vấn đề tính toán Jacobian một cách hiệu quả ...
 
@@ -100,7 +123,7 @@ $$\phi = \phi_K \circ \ldots \circ \phi_2 \circ \phi_1.$$
 Flow trên có likelihôd được tính bởi tổng likelihood của các flow thành phần:
 $$\log q(y) = \log p(\phi^{-1}(y)) + \sum_{k=1}^K \log \det\left[\frac{\partial \phi_k^{-1}}{\partial x_{k+1}}(x_{k+1})\right]$$
 
-### Continuous Normalizing Flows (CNFs): Sử dụng ODE để mô tả flow
+### 2.5. Continuous Normalizing Flows (CNFs): Sử dụng ODE để mô tả flow
 
 Như đã nói ở trên, Residual Flow là chuỗi các phép biến đổi $\phi(x) = x + \delta \ u(x)$ với $\delta > 0$. Suy ra:
 $$\frac{\phi(x) - x}{\delta} = u(x)$$
