@@ -333,3 +333,28 @@ d\. Ý nghĩa
 
 Ngoài ra, CNF giúp yêu cầu Lipschitz dễ thỏa mãn hơn. Trong residual flow, để đảm bảo ánh xạ khả nghịch, trường vận tốc $u$ phải là Lipschitz với hằng số cụ thể, điều này khó kiểm soát trong huấn luyện. Với CNFs, ta vẫn cần $u_t$ là hàm Lipschitz, nhưng không cần quan tâm đến giá trị hằng số Lipschitz chính xác, việc này dễ dàng thực hiện hơn trong kiến trúc mạng neural.
 
+### 3.3. Huấn luyện Continuous Normalizing Flows (CNFs)
+
+Continuous Normalizing Flows (CNFs) được huấn luyện bằng cách cực đại hóa log-likelihood của dữ liệu (maximum likelihood estimation):
+
+$$
+\mathcal{L}(\theta) = \mathbb{E}_{x \sim q_{\text{data}}} \left[ \log p_1(x) \right] \tag{10}
+$$
+
+trong đó:
+- $q_{\text{data}}$ là phân phối dữ liệu thực nghiệm,
+- $p_1(x)$ là phân phối của mô hình sau khi đã được đẩy qua toàn bộ quá trình flow (tức tại thời điểm $t=1$),
+- $\theta$ là tập hợp tham số của trường vector tham số hóa $u_\theta(t, x)$.
+
+Để tính được giá trị log-likelihood này cũng như gradient của nó theo $\theta$, ta cần giải hệ phương trình vi phân thường (ODE) mô tả sự tiến hóa liên tục của các mẫu $x(t)$ từ phân phối cơ sở $p_0$ (thường là Gaussian chuẩn) đến phân phối đích $p_1$. Cụ thể, việc tính $\log p_t(x_t)$ tại mọi thời điểm $t$ đều yêu cầu:
+- Tích phân ngược ODE để đưa các điểm dữ liệu từ $t=1$ trở về $t=0$,
+- Tính toán trace của Jacobian (tức độ phân kỳ $\nabla_x \cdot u_\theta(t, x)$) tại nhiều bước thời gian.
+
+Những yêu cầu trên dẫn tới hai khó khăn lớn trong quá trình huấn luyện:
+
+- Chi phí tính toán rất cao: mỗi bước lan truyền xuôi và lan truyền ngược đều đòi hỏi giải số ODE hàng trăm đến hàng nghìn bước thời gian bằng các bộ giải như Dopri5, RK45, v.v.
+- Ước lượng độ phân kỳ trong không gian chiều cao: các phương pháp thông thường thường có phương sai rất lớn khi chiều dữ liệu tăng, khiến việc huấn luyện trở nên không ổn định hoặc cực kỳ chậm.
+
+Mặc dù CNFs có khả năng biểu diễn cực kỳ mạnh — vì chúng tham số hóa một lớp rất rộng các flow liên tục và do đó có thể xấp xỉ gần như mọi phân phối xác suất liên tục — nhưng tốc độ huấn luyện lại là điểm nghẽn nghiêm trọng do phải thực hiện phép tích phân ODE ở mỗi iteration của tối ưu. Đây là lúc hướng nghiên cứu Flow Matching ra đời
+
+## 4. Flow Matching
