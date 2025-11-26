@@ -25,20 +25,26 @@ Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. M
 
 ## 2. Cơ sở toán học
 
-### 2.1. Khái niệm Flow
+### 2.1. Khái niệm Flow và Probabilty Path
 
 a\. Định nghĩa
 
-Trong bối cảnh flow matching và continuous normalizing flows (CNFs), *dòng chảy* ký hiệu $\phi_t$ được hiểu như một họ ánh xạ mô tả sự tiến hóa, biển đổi của điểm trạng thái theo thời gian. Với một trường vận tốc $u(x,t)$, dòng chảy $\Psi_t(x_0)$ được định nghĩa là nghiệm tại thời điểm $t$ của phương trình vi phân
+Trong bối cảnh flow matching và continuous normalizing flows (CNFs), Flow ký hiệu $\phi_t$ được hiểu như một họ ánh xạ mô tả sự tiến hóa, biển đổi của điểm trạng thái theo thời gian. Với một trường vận tốc $u(x,t)$, flow $\Psi_t(x_0)$ được định nghĩa là nghiệm tại thời điểm $t$ của phương trình vi phân
 $$ \frac{dx}{dt} = v(x,t), \qquad x(0) = x_0. $$
 
 Ánh xạ $\phi_t$ vì thế đóng vai trò như bản đồ tiến hóa từ phân phối ban đầu sang phân phối mục tiêu trong các mô hình CNF và Flow Matching.
 
+Ta gọi một biến xác suất phụ thuộc theo thời gian $(p_t)_{0 \le t \le 1}$ là một đường xác suất (probability path). Với bài toán hiện tại, đường xác suất quan trọng mà ta cần quan tâm là hàm mật độ xác suất tại biên của mô hình flow $X_t = \phi(X_0)$ tại thời điểm t:
+$$
+X_t  \sim p_t
+$$
+
+
 b\. Tính chất
 
-Tính khả nghịch của dòng chảy giữ vai trò đặc biệt quan trọng: khi $\phi$ là song ánh, ta có thể truy vết ngược từ $\phi_t(x_0)$ về trạng thái gốc thông qua ánh xạ ngược $\phi_t^{-1}$, thường được hiện thực bằng việc tích phân trường vận tốc theo chiều thời gian âm. Trong thiết kế của CNF và trong các thuật toán flow matching, tính khả nghịch này bảo đảm rằng các phép biến đổi là khả vi và bảo toàn thông tin, cho phép tính toán chính xác mật độ thông qua công thức biến đổi log-density liên tục.
+Tính khả nghịch của flow giữ vai trò đặc biệt quan trọng: khi $\phi$ là song ánh, ta có thể truy vết ngược từ $\phi_t(x_0)$ về trạng thái gốc thông qua ánh xạ ngược $\phi_t^{-1}$, thường được hiện thực bằng việc tích phân trường vận tốc theo chiều thời gian âm. Trong thiết kế của CNF và trong các thuật toán flow matching, tính khả nghịch này bảo đảm rằng các phép biến đổi là khả vi và bảo toàn thông tin, cho phép tính toán chính xác mật độ thông qua công thức biến đổi log-density liên tục.
 
-Một điều kiện thường được sử dụng để đảm bảo sự tồn tại duy nhất của nghiệm ODE, và dể đảm bảo tính song ánh của dòng chảy, là trường vận tốc $u(\cdot,t)$ thỏa mãn điều kiện Lipschitz (theo định lý Picard-Lindelöf được nhắc đến ở sau). Tính Lipschitz này ngăn chặn sự hội tụ của các quỹ đạo khác nhau và bảo đảm rằng mỗi điểm đầu có đúng một quỹ đạo tương ứng, điều kiện cốt lõi để dòng chảy đóng vai trò như một phép biến đổi khả nghịch trong continuous normalizing flows và trong phân tích lý thuyết của flow matching.
+Một điều kiện thường được sử dụng để đảm bảo sự tồn tại duy nhất của nghiệm ODE, và dể đảm bảo tính song ánh của flow, là trường vận tốc $u(\cdot,t)$ thỏa mãn điều kiện Lipschitz (theo định lý Picard-Lindelöf được nhắc đến ở sau). Tính Lipschitz này ngăn chặn sự hội tụ của các quỹ đạo khác nhau và bảo đảm rằng mỗi điểm đầu có đúng một quỹ đạo tương ứng, điều kiện cốt lõi để flow đóng vai trò như một phép biến đổi khả nghịch trong continuous normalizing flows và trong phân tích lý thuyết của flow matching.
 
 
 ### 2.2. Cơ sở về định lý Biến đối biến (Change of Variables Theorem)
@@ -143,60 +149,159 @@ c\. Ý nghĩa
 
 Trong việc sử dụng flow như mô hình sinh, tính lipschitz của hàm dịch chuyển $u_t$ đảm bảo rằng flow sẽ có nghiệm duy nhất. Tính duy nhất này đảm bảo cho tính chất khả nghịch trên miền xác định.
 
+### 2.6. Transport Equation
+
+a\. Giới thiệu
+Transport equation (hay continuity equation) là một phương trình đạo hàm riêng mô tả cách một đại lượng, thường là mật độ xác suất, thay đổi theo thời gian khi nó được vận chuyển bởi một velocity field. Đây là mô hình toán học chuẩn để mô tả sự thay đổi của phân phối trong các hệ động lực liên tục.
+
+b\. Phát biểu
+Ta ký hiệu $p_t(x)$ là hàm mật độ xác suất của x tại thời điểm $t$.
+
+Dạng tổng quát của Transport Equation mô tả sự thay đổi theo thời gian của một hàm mật độ xác suất \( p_t(x) \) dưới tác động của một trường vận tốc \( v_t(x) \):
+
+$$
+\frac{\partial p_t(x)}{\partial t} + \nabla \cdot \left( p_t \, u_t(x) \right) = 0.
+$$
+
+c\. Ý nghĩa
+Transport equation được sử dụng để:
+- Mô tả sự biến đổi của một phân phối xác suất khi nó di chuyển theo một trường vận tốc.
+- Làm nền tảng lý thuyết cho các mô hình sinh liên tục như normalizing flows, diffusion models và đặc biệt là flow matching.
+
+Trong flow matching, transport equation cho phép ta hiểu rằng việc học một trường vận tốc thích hợp là đủ để biến đổi phân phối nguồn thành phân phối đích thông qua việc giải một phương trình vi phân.
+
 ## 3. Continuous Normalising Flows
 
 ### 3.1. Residual Flows
 
-Quay trở về bài toán về bài toán lúc đầu, ta cố gắng tìm hàm số $\phi(x)$ từ các mẫu từ phân phối sẵn có với mong muốn tạo ra được $y$ từ phân phối mong muốn.
+Quay trở lại bài toán ban đầu: ta có một phân phối nguồn với các mẫu $x \sim p_0(x)$, và mục tiêu là tìm một ánh xạ $\phi(x)$ sao cho biến đổi này đưa được mẫu $x$ sang mẫu $y$ tuân theo phân phối mục tiêu $p_1(y)$. Đây chính là bài toán distribution transport: tìm một ánh xạ từ phân phối nguồn sang phân phối đích.
 
-Cách tiếp cận đầu tiên là Residual Flow. Residual Flow thực hiện một chuỗi gồm $K$ hàm biến đổi liên tiếp nhau.
+Một cách tiếp cận trực tiếp và mang tính trực quan là chia quá trình biến đổi này thành nhiều bước nhỏ. Thay vì tìm một ánh xạ phức tạp duy nhất, ta xây dựng nó thông qua chuỗi các phép biến đổi đơn giản, mỗi phép biến đổi chỉ điều chỉnh mẫu đầu vào một lượng nhỏ. Đây chính là ý tưởng chính của Residual Flow.
 
-Một Residual Flow có dạng:
-$$\phi = \phi_K \circ \ldots \circ \phi_2 \circ \phi_1.$$
+a\. Ý tưởng của Residual Flow
 
-Với $\phi_k(x)$ có dạng:
-$$\phi_k(x) = x + \delta \ u_k(x)$$
-Trong đó:
+Residual Flow giả định rằng ta có thể xây dựng ánh xạ tổng thể $\phi$ bằng cách ghép nối $K$ biến đổi nhỏ, ký hiệu là:
 
-- $x$ là đầu vào.
-- $u_k(x)$ là một hàm dịch chuyển, thường được tham số hóa bằng mạng nơ-ron.
-- $\delta$ là một hằng số nhỏ dương.
+$$
+\phi = \phi_K \circ \cdots \circ \phi_2 \circ \phi_1 .
+$$
 
-Khi đó, $x$ sẽ được biến đổi dưới dạng chuỗi:
-$$ x \xrightarrow{\phi_{1}} x_1  \xrightarrow{\phi_{2}} x_2 \xrightarrow{} ... \xrightarrow{\phi_{K}} x_K = y $$
+Ở mỗi bước, biến đổi $\phi_k$ có dạng residual quen thuộc trong deep learning:$\phi_k(x) = x + \delta u_k(x),$
+
+trong đó:
+
+* $x$: đầu vào của bước thứ (k),
+* $u_k(x)$: hàm dịch chuyển (hay velocity field) tại bước $k$,
+* $\delta > 0$: một hằng số nhỏ, thể hiện “bước tiến” trong không gian.
+
+Hiểu một cách trực quan:
+
+* $u_k(x)$ quyết định hướng và độ lớn của dịch chuyển,
+* $\delta$ đảm bảo mỗi bước là “nhỏ”, nhờ đó chuỗi các bước có thể xấp xỉ một dòng chảy liên tục (continuous flow),
+* việc cộng thêm $x$ giúp mỗi $\phi_k$ giống với một bước Euler rời rạc hóa của một phương trình vi phân.
+
+Do đó, mẫu sẽ được cập nhật theo chuỗi:
+
+$$
+x \xrightarrow{\phi_1} x_1 \xrightarrow{\phi_2} x_2 \rightarrow \cdots \xrightarrow{\phi_K} x_K = y.
+$$
+
+Mỗi bước chỉ thay đổi mẫu một chút, nhưng ghép lại thì hình thành ánh xạ hoàn chỉnh từ phân phối nguồn sang phân phối mục tiêu.
+
+b\. Log-Likelihood của từng bước trong Residual Flow
 
 Do $x_{k} = \phi_k(x_{k-1})$ nên áp dụng công thức (2.3) và (2.6), ta được hàm Log-Likelihood khi dịch $x_{k-1} \to x_k$: 
-$$\mathcal{L_k(\theta)} = \log p_k(x_{k}|\theta) = \log( p_{k-1}(x_{k-1}) \left| \det \left[ \frac{\partial \phi^{-1}_{k-1}}{\partial x_k}(x_k) \right] \right| )$$
+$$
+\mathcal{L_k(\theta)} = \log p_k(x_{k}|\theta) = 
+\log p_{k-1}(x_{k-1}| \theta) + \log\left| \det \left[ \frac{\partial \phi^{-1}_{k-1}}{\partial x_k}(x_k) \right] \right| 
+$$
 
-Suy ra, residual flow có likelihood được tính bởi tổng likelihood của các flow thành phần:
-$$ \mathcal{L(\theta)} =  \sum_{k=1}^K \mathcal{L_k(\theta)}  = \log p_0(x) + \sum_{k=1}^K \log \det\left[\frac{\partial \phi_k^{-1}}{\partial x_{k+1}}(x_{k+1})\right]$$
+Giải thích:
+
+* $x_{k-1} = \phi_k^{-1}(x_k)$: mẫu trước phép biến đổi,
+* $p_{k-1}(x_{k-1})$: mật độ trước bước (k),
+* Định thức Jacobi của $\phi_k^{-1}$ mô tả sự thay đổi thể tích của không gian khi điểm được biến đổi qua $\phi_k$.
+
+c\. Log-Likelihood tổng của Residual Flow
+
+Thực hiện quy nạp theo $k$, ta thu được công thức Log-likelihood của cả Flow như sau:
+$$
+L(\theta)
+= \log p_0(x)
+
++ \sum_{k=1}^K \log \left| \det [
+  \frac{\partial \phi_k^{-1}}{\partial x_{k+1}}(x_{k+1})
+  ] \right|.
+$$
+
 
 ### 3.2. Continuous Normalising Flows (CNFs)
 
-Như đã nói ở trên, Residual Flow là chuỗi các phép biến đổi $\phi(x) = x + \delta \ u(x)$ với $\delta > 0$. Suy ra:
-$$\frac{\phi(x) - x}{\delta} = u(x) ~~ (2.7)$$
-
-Cho $\delta = \frac{1}{K}$, $K \to \infty$, nếu như $u(x)$ là hàm Lipschitz, thì đẳng thức (2.7) trở thành:
-$$ 
-\frac{{d x_t}}{d t} = \lim_{\delta \rightarrow 0} \frac{x_{t+\delta} - x_t}{\delta} = \frac{\phi_t(x_t) - x_t}{\delta} = u_t(x_t)
-$$ 
-
-$$\Leftrightarrow \frac{d\phi_t}{dt} = u_t(\phi_t(x_0)).$$
-
-Vậy kết quả của phép $\phi_t$ biến đổi $x_0$ thành nghiệm một phương trình vi phân tại thời điểm t như sau:
-$$
-
-x_t \triangleq \phi_t(x_0) = x_0 + \int_{0}^t u_s(x_s) d s ~~~(2.8)
+Như đã trình bày ở phần trước, **Residual Flow** được xây dựng như một chuỗi các phép biến đổi rời rạc có dạng:
 
 $$
+\phi(x) = x + \delta, u(x)
+$$
 
-Qua phương trình (2.8), ta thấy thay vì phải sử dụng chuỗi gồm $K$ phép biến đổi $\phi_k$ liên tục, sự biến đổi phân phối gốc $p_0$ tại thời điểm $t = 0$ tới phân phối đích $p_1$ tại $t = 1$ có thể được mô tả bằng phương trình vi phân (nếu trường $u_t$ là hàm Lipschipz).  
+với $\delta > 0$ là một bước nhỏ. Ta có thể hiểu rằng mỗi phép biến đổi $\phi$ di chuyển điểm $x$ dọc theo hướng của trường vận tốc $u$, với độ dài bước tỉ lệ với $\delta$. Từ biểu thức trên, ta suy ra:
 
-#### Công thức log-density trong CNFs
+$$
+\frac{\phi(x) - x}{\delta} = u(x) ~~~ (3.1)
+$$
+
+Đẳng thức (3.1) có dạng một xấp xỉ sai phân hữu hạn cho đạo hàm của một hàm theo thời gian. Điều này mở đường để diễn giải chuỗi các Residual Flow như xấp xỉ rời rạc của một continuous flow.
+
+a\. Liên hệ với mô tả liên tục theo thời gian
+
+Giờ ta đặt $\delta = \frac{1}{K}$ và xét giới hạn $K \to \infty$. Khi đó, chuỗi $K$ phép biến đổi:
+
+$$
+x \xrightarrow{\phi_1} x_1 \xrightarrow{\phi_2} x_2 \cdots \xrightarrow{\phi_K} x_K
+$$
+
+sẽ mô phỏng một chuyển động liên tục từ thời điểm (t = 0) đến (t = 1).
+
+Nếu trường vận tốc $u(x)$ là hàm Lipschitz và liên tục, ta có đảm bảo toán học rằng nghiệm của phương trình vi phân tồn tại và duy nhất. Trong trường hợp này, biểu thức (3.1) trở thành xấp xỉ cho đạo hàm theo thời gian:
+
+$$
+\frac{{d x_t}}{d t}
+= \lim_{\delta \rightarrow 0} \frac{x_{t+\delta} - x_t}{\delta}
+= \frac{\phi_t(x_t) - x_t}{\delta}
+= u_t(x_t).
+$$
+
+Nói cách khác, ta có:
+
+$$
+\Leftrightarrow \frac{d\phi_t}{dt} = u_t(\phi_t(x_0)).
+$$
+
+Phương trình này cho thấy rằng ánh xạ $\phi_t$ đóng vai trò như họ nghiệm của một phương trình vi phân, trong đó vận tốc của điểm tại thời điểm $t$ phụ thuộc vào trường vận tốc $u_t$.
+
+a\. Họ nghiệm của trường vận tốc
+
+Giải phương trình vi phân này từ $t = 0$ đến thời điểm bất kỳ $t$, ta thu được:
+
+$$
+x_t \triangleq \phi_t(x_0)
+= x_0 + \int_{0}^t u_s(x_s), ds ~~~(2.8)
+$$
+
+Biểu thức (2.8) chính là dạng tích phân của nghiệm ODE:
+
+* $x_0$ là điểm ban đầu,
+* $u_s(x_s)$ là vận tốc tại vị trí $x_s$ và thời điểm $s$,
+* $\phi_t$ là ánh xạ biến đổi điểm đầu $x_0$ sau thời gian $t$.
+
+Như vậy, thay vì xem $\phi_t$ là một phép biến đổi tùy ý, ta có thể xem $\phi_t$ như nghiệm của một quá trình biến đổi liên tục sinh ra bởi trường vận tốc $u_t$. Điều này đưa ta đến Continuous Normalizing Flows và cuối cùng là nền tảng lý thuyết của Flow Matching, nơi việc học trường vận tốc $u_t$ trở thành mục tiêu chính thay vì học từng phép biến đổi rời rạc.
+ 
+Công thức log-density trong CNFs
+
+Qua trên, ta đã xác định được hàm mapping $\phi_t$, tuy nhiên ta chưa biết khi $x_t$ biến đổi theo $u_t$ thì $p_t$ sẽ biến đổi như thế nào.
 
 Sự thay đổi mật độ xác suất $\log p_t(x_t)$ theo thời gian $t$ được tính thông qua công thức Liouville (một dạng của Phương trình Vận chuyển) bằng cách sử dụng độ phân kỳ (divergence) của trường vectơ $u_t$:
 
-$$\frac{\dd}{\dd t} \log p_t(x_t) = - (\nabla \cdot u_t)(x_t) = - \mathrm{div}\ u_t(x_t)$$
+$$\frac{d}{d t} \log p_t(x_t) = - (\nabla \cdot u_t)(x_t) = - \mathrm{div}\ u_t(x_t)$$
 
 Từ đó, log-density của phân phối dữ liệu $p_1(x)$ (tại $t=1$) được tính bằng cách tích phân độ phân kỳ theo thời gian:
 
@@ -204,17 +309,3 @@ $$\log p_\theta(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_\theta)(x_t) d t$$
 
 Quá trình này chỉ yêu cầu tính toán độ phân kỳ (divergence) của trường vectơ $u_\theta$, thay vì toàn bộ định thức Jacobian của một phép biến đổi phức tạp, giúp việc tính toán hiệu quả hơn.
 
-### Training
-
-#### Mục tiêu tối ưu
-
-Việc huấn luyện Normalizing Flows thường dựa trên nguyên tắc Ước lượng Khả năng Hợp lý Cực đại (Maximum Likelihood Estimation - MLE). Mục tiêu là tìm tham số $\theta$ của flow $\phi_\theta$ để tối đa hóa log-khả năng hợp lý của dữ liệu $\mathcal{D}$ dưới mô hình:
-
-$$\textrm{argmax}_{\theta}\ \ \mathbb{E}_{x\sim \mathcal{D}} [\log p_1(x)]$$
-
-Trong đó, $\log p_1(x)$ được tính bằng Công thức Đổi biến (đối với flows rời rạc) hoặc công thức tích phân độ phân kỳ (đối với CNFs).
-
-####
-
-- Flows Rời rạc
-- CNFs
