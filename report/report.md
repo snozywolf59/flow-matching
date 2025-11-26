@@ -278,7 +278,7 @@ $$
 
 Phương trình này cho thấy rằng ánh xạ $\phi_t$ đóng vai trò như họ nghiệm của một phương trình vi phân, trong đó vận tốc của điểm tại thời điểm $t$ phụ thuộc vào trường vận tốc $u_t$.
 
-a\. Họ nghiệm của trường vận tốc
+b\. Họ nghiệm của trường vận tốc
 
 Giải phương trình vi phân này từ $t = 0$ đến thời điểm bất kỳ $t$, ta thu được:
 
@@ -295,17 +295,41 @@ Biểu thức (2.8) chính là dạng tích phân của nghiệm ODE:
 
 Như vậy, thay vì xem $\phi_t$ là một phép biến đổi tùy ý, ta có thể xem $\phi_t$ như nghiệm của một quá trình biến đổi liên tục sinh ra bởi trường vận tốc $u_t$. Điều này đưa ta đến Continuous Normalizing Flows và cuối cùng là nền tảng lý thuyết của Flow Matching, nơi việc học trường vận tốc $u_t$ trở thành mục tiêu chính thay vì học từng phép biến đổi rời rạc.
  
-Công thức log-density trong CNFs
+c\. Công thức log-density trong CNFs
 
 Qua trên, ta đã xác định được hàm mapping $\phi_t$, tuy nhiên ta chưa biết khi $x_t$ biến đổi theo $u_t$ thì $p_t$ sẽ biến đổi như thế nào.
 
-Sự thay đổi mật độ xác suất $\log p_t(x_t)$ theo thời gian $t$ được tính thông qua công thức Liouville (một dạng của Phương trình Vận chuyển) bằng cách sử dụng độ phân kỳ (divergence) của trường vectơ $u_t$:
+Sự thay đổi mật độ xác suất $\log p_t(x_t)$ theo thời gian $t$ được tính thông qua công thức Phương trình Liên tục bằng cách sử dụng độ phân kỳ của trường vectơ $u_t$:
 
-$$\frac{d}{d t} \log p_t(x_t) = - (\nabla \cdot u_t)(x_t) = - \mathrm{div}\ u_t(x_t)$$
+$$\frac{\partial}{\partial t} \log p_t(x_t) = - (\nabla \cdot (u_t p_t))(x_t) = - \mathrm{div}\ u_t p_t(x_t)$$
+
+Suy ra, vi phân toàn phần của $p_t(x_t)$ được tính như sau:
+
+$$
+
+\frac{d}{d t} p_t(x_t) 
+= \frac{\partial}{\partial_t} p_t(x_t) + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
+= - p_t(x_t) (\nabla \cdot u_t)(x_t) - \langle \nabla_{x_t} p_t(x_t), u_t(x_t) \rangle + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
+= - p_t(x_t) (\nabla \cdot u_t)(x_t).
+
+$$
+
+Suy ra:
+
+$$
+\frac{d}{d t} \log p_t(x_t) = \frac{1}{p_t(x_t)} \frac{d}{d t} p_t(x_t) = - (\nabla \cdot u_t)(x_t).
+$$
 
 Từ đó, log-density của phân phối dữ liệu $p_1(x)$ (tại $t=1$) được tính bằng cách tích phân độ phân kỳ theo thời gian:
 
 $$\log p_\theta(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_\theta)(x_t) d t$$
 
-Quá trình này chỉ yêu cầu tính toán độ phân kỳ (divergence) của trường vectơ $u_\theta$, thay vì toàn bộ định thức Jacobian của một phép biến đổi phức tạp, giúp việc tính toán hiệu quả hơn.
+Quá trình này chỉ yêu cầu tính toán độ phân kỳ (divergence) của trường vectơ $u_\theta$, thay vì toàn bộ định thức Jacobi của một phép biến đổi phức tạp, giúp việc tính toán hiệu quả hơn.
+
+
+d\. Ý nghĩa
+
+Đầu tiên, CNF cho phép xác định số bước trong Residual hiệu quả mà không cần đặt làm siêu tham số. Trong điều kiện liên tục theo thời gian, ta chỉ cần chọn ngưỡng error, và sẽ có một bộ giải mã để đưa ra bước $\delta t$ thích hợp, tương đương với $K$ bước. Với bộ giải mã bậc nhất, mỗi bước có dạng tương tự residual flow, nhưng tham số của kết nối residual được chia sẻ giữa các bước, thay vì mỗi bước có tham số riêng như trong residual flow.
+
+Ngoài ra, CNF giúp yêu cầu Lipschitz dễ thỏa mãn hơn. Trong residual flow, để đảm bảo ánh xạ khả nghịch, trường vận tốc $u$ phải là Lipschitz với hằng số cụ thể, điều này khó kiểm soát trong huấn luyện. Với CNFs, ta vẫn cần $u_t$ là hàm Lipschitz, nhưng không cần quan tâm đến giá trị hằng số Lipschitz chính xác, việc này dễ dàng thực hiện hơn trong kiến trúc mạng neural.
 
