@@ -1,7 +1,7 @@
 ## 1. Giới thiệu
 a\. Bối cảnh
 
-Giả sử chúng ta có các mẫu $x_1, x_2, …, x_n$ từ 1 phân phối $q(x)$, trong đó $q(x)$ là phân phối mà ta chưa biết. Từ các mẫu xi này, ta sẽ muốn tạo ra một mô hình học xác suất xấp xỉ với $q(x)$. Đây được gọi là generative model, với ý tưởng cốt lõi là cố gắng học quá trình sinh dữ liệu ngoài thực tế.
+Giả sử chúng ta có các mẫu $x_1, x_2, …, x_n$ từ 1 phân phối $q(x)$, trong đó $q(x)$ là phân phối mà ta chưa biết. Từ các mẫu $x_i$ này, ta sẽ muốn tạo ra một mô hình học xác suất xấp xỉ với $q(x)$. Đây được gọi là generative model, với ý tưởng cốt lõi là cố gắng học quá trình sinh dữ liệu ngoài thực tế.
 
 Generative model là một lĩnh vực quan trọng trong trí tuệ nhân tạo và học máy, tập trung vào việc xây dựng các mô hình có khả năng tạo ra dữ liệu mới dựa trên phân phối của dữ liệu huấn luyện. Các kỹ thuật phổ biến bao gồm Generative Adversarial Networks (GANs), nơi một mạng generator tạo dữ liệu giả và một mạng discriminator phân biệt thật-giả để cải thiện chất lượng; Variational Autoencoders (VAEs) sử dụng không gian ẩn để tái tạo dữ liệu; và gần đây là diffusion models, dần dần thêm nhiễu rồi loại bỏ để sinh mẫu mới. Những mô hình này giúp vượt qua hạn chế của dữ liệu hạn chế, mở ra tiềm năng sáng tạo vô hạn.
 
@@ -65,7 +65,7 @@ Trong đó:
 
 - $R = \phi^{-1}(S)$ là vùng tích phân theo $x$.
 - $\psi^{-1}(R) = \phi(R) = S$ là vùng tích phân theo $y$.
-- $J_{\psi}(y)$ là ma trận Jacobian của hàm ngược.
+- $J_{\psi}(y)$ là ma trận Jacobi của hàm ngược.
 
 Ta lại có:
 $$ J_{\psi}(y) = J_{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
@@ -284,10 +284,10 @@ Giải phương trình vi phân này từ $t = 0$ đến thời điểm bất k�
 
 $$
 x_t \triangleq \phi_t(x_0)
-= x_0 + \int_{0}^t u_s(x_s), ds ~~~(2.8)
+= x_0 + \int_{0}^t u_s(x_s), ds ~~~(3.2)
 $$
 
-Biểu thức (2.8) chính là dạng tích phân của nghiệm ODE:
+Biểu thức (3.2) chính là dạng tích phân của nghiệm ODE:
 
 * $x_0$ là điểm ban đầu,
 * $u_s(x_s)$ là vận tốc tại vị trí $x_s$ và thời điểm $s$,
@@ -338,7 +338,7 @@ Ngoài ra, CNF giúp yêu cầu Lipschitz dễ thỏa mãn hơn. Trong residual 
 Continuous Normalizing Flows (CNFs) được huấn luyện bằng cách cực đại hóa log-likelihood của dữ liệu (maximum likelihood estimation):
 
 $$
-\mathcal{L}(\theta) = \mathbb{E}_{x \sim q_{\text{data}}} \left[ \log p_1(x) \right] \tag{10}
+\mathcal{L}(\theta) = \mathbb{E}_{x \sim q_{\text{data}}} \left[ \log p_1(x) \right] \tag{4.1}
 $$
 
 trong đó:
@@ -358,3 +358,69 @@ Những yêu cầu trên dẫn tới hai khó khăn lớn trong quá trình hu�
 Mặc dù CNFs có khả năng biểu diễn cực kỳ mạnh — vì chúng tham số hóa một lớp rất rộng các flow liên tục và do đó có thể xấp xỉ gần như mọi phân phối xác suất liên tục — nhưng tốc độ huấn luyện lại là điểm nghẽn nghiêm trọng do phải thực hiện phép tích phân ODE ở mỗi iteration của tối ưu. Đây là lúc hướng nghiên cứu Flow Matching ra đời
 
 ## 4. Flow Matching
+
+### 4.1. Tổng quan
+
+Sau khi đã thấy rằng, sử dụng CNF mang lại cải tiến hơn so với sử dụng residual flows rời rạc, chẳng hạn như tự động xác định số bước mô phỏng và nới lỏng yêu cầu về hằng số Lipschitz, câu hỏi tự nhiên tiếp theo là: làm thế nào để huấn luyện các mô hình CNF một cách hiệu quả?
+
+Residual flows có thể huấn luyện trực tiếp bằng maximum likelihood, nhưng với CNF, việc tính toán log-likelihood đòi hỏi phải tính các tích phân, vi phân theo thời gian, thường rất tốn kém và không ổn định. Do đó, ta cần một phương pháp huấn luyện không dựa vào flow và tránh phải tính các đạo hàm bậc hai đắt đỏ.
+
+Và đây chính là động lực dẫn đến phương pháp Flow Matching (FM). Flow Matching là một kỹ thuật huấn luyện simulation-free cho CNF: thay vì giải phương trình vi phân để tạo dữ liệu khớp với phân phối xác suất, ta xây dựng trực tiếp một mục tiêu hồi quy cho trường vector tham số $u_\theta(t,x)$. Cụ thể, hàm mất mát được xây dựng như sau:
+
+$$
+\mathcal{L}(\theta)
+= \mathbb{E}_{t \sim \mathcal{U}[0,1],  ~ x \sim p_t}
+\left[
+|u_\theta(t,x) - u(t,x)|^2
+\right].
+$$
+
+Ở đây, $u(t,x)$ là một vector field mà ta kỳ vọng sẽ sinh ra một probability path $p_t$ nội suy giữa phân phối gốc $p_0$ và phân phối đích $p_1$. Quan hệ giữa chúng thỏa mãn:
+
+$$
+\log p_1(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_t)(x_t) dt.
+$$
+
+Diễn giải ngắn gọn: Flow Matching đơn giản là thực hiện regression của $u_\theta(t,x)$ lên trường vector mục tiêu $u(t,x)$ tại mọi thời điểm $t \in [0,1]$.
+
+Tuy nhiên, điều này đặt ra một vấn đề quan trọng: nếu ta có thể biết được $u(t,x)$, thì rõ ràng sẽ không cần phải huấn luyện mô hình để để dự đoán nữa. Điểm khác biệt của Flow Matching nằm ở chỗ,  ta có thể xây dựng một mục tiêu thích hợp cho $u_\theta(t,x)$ mà không cần phải tính tường minh giá trị vector $u(t,x)$ thực sự. Đó là thay vì học flow trên toàn dữ liệu, ta xây dựng các flow cục bộ dựa trên các cặp mẫu $(x_0, x_1)$ và dạy mô hình bắt chước chúng.
+
+### 4.2. Conditional Flow
+
+Trong bài báo Flow Matching For Generative Modeling của Lipman (2023), ông và các cộng sự đã đề xuất một phương pháp để xây dựng flow matching, đó là dựa trên việc xây dựng và kết hợp các đường xác suất (tức probability path) $p_t$ và trường $u_t$ dựa trên xác suất có điều kiện.
+
+a\. Đường xác suất có điều kiện
+
+Giả sử ta có một mẫu dữ liệu đích cụ thể $y_1 \sim q(y)$. Ta định nghĩa $p_t(x|y_1)$ là một đường xác suất có điều kiện (conditional probability path) mô tả quá trình biến đổi của biến $x$ theo thời gian $t \in [0, 1]$, thỏa mãn hai biên:
+* Tại thời điểm khởi đầu $t=0$ :  $p_0(x|y_1) = p(x)$, trong đó $p(x)$ là phân phối nguồn (ví dụ: phân phối $\mathcal{N}(x|0, I)$).
+* Tại thời điểm kết thúc $t=1$ :  $p_1(x|y_1)$ là một phân phối đích, tập trung xung quanh mẫu dữ liệu $y_1$ (ví dụ: một phân phối chuẩn với phương sai $\sigma$ rất nhỏ: $\mathcal{N}(x|y_1, \sigma^2 I)$).
+
+Từ các đường xác suất có điều kiện này, ta có thể khôi phục lại đường xác suất cận biên (marginal probability path) $p_t(x)$ cho toàn bộ không gian dữ liệu bằng cách lấy tích phân biên qua phân phối dữ liệu $q(y_1)$:
+
+$$p_t(x) = \int_{y_1} p_t(x|y_1)q(y_1)dy_1$$
+
+Công thức này cho thấy $p_t(x)$ thực chất là một phân phối hỗn hợp (mixture distribution). Đặc biệt tại $t=1$, $p_1(x)$ sẽ có thể xấp xỉ tốt đối với phân phối dữ liệu thực tế $q(x)$ nhờ sự tổng hợp của các phân phối con tập trung quanh từng điểm dữ liệu.
+
+b\. Xây dựng trường Vector $u_t$
+
+Tương ứng với mỗi đường xác suất có điều kiện $p_t(x|y_1)$, tồn tại một **trường vector có điều kiện** $u_t(x|y_1): \mathbb{R}^d \rightarrow \mathbb{R}^d$ đóng vai trò sinh ra dòng chảy đó. Vì $p_t(x|y_1)$ được thiết kế đơn giản (ví dụ: đường thẳng Gaussian), $u_t(x|y_1)$ thường có dạng đóng và dễ dàng tính toán.
+
+Vấn đề đặt ra là: *Làm thế nào để tổng hợp các trường vector cục bộ này thành một trường vector toàn cục $u_t(x)$ điều khiển đường xác suất biên $p_t(x)$?*
+
+Lipman (2023) đã chứng minh rằng không thể chỉ đơn giản lấy trung bình cộng các vector. Thay vào đó, **trường vector biên** (marginal vector field) được định nghĩa chính xác thông qua công thức kỳ vọng có trọng số như sau (giả sử $p_t(x)>0$):
+
+$$u_t(x) = \int u_t(x|y_1) \frac{p_t(x|y_1)q(y_1)}{p_t(x)} dy_1$$
+
+Trong đó, tỷ số $\frac{p_t(x|y_1)q(y_1)}{p_t(x)}$ đóng vai trò như xác suất hậu nghiệm (posterior), xác định mức độ đóng góp của dòng chảy từ $y_1$ vào vị trí $x$ tại thời điểm $t$.
+
+**3. Kết luận quan trọng (Key Observation)**
+
+Điểm đột phá của nghiên cứu này nằm ở mối liên hệ bất ngờ giữa các thành phần trên:
+
+> **Trường vector biên $u_t(x)$ được định nghĩa bởi phương trình tích phân trên chính là trường vector sinh ra đường xác suất biên $p_t(x)$.**
+
+Quan sát này có ý nghĩa thực tiễn to lớn: Nó cho phép chúng ta phá vỡ trường vector biên phức tạp (cái mà ta cần tìm nhưng không biết) thành các trường vector có điều kiện đơn giản (cái mà ta hoàn toàn có thể thiết kế). Đây chính là cơ sở lý thuyết để xây dựng hàm mục tiêu **Conditional Flow Matching**, cho phép huấn luyện mô hình sinh dữ liệu một cách hiệu quả mà không cần giải các phương trình vi phân phức tạp trong quá trình huấn luyện.
+## Tham khảo
+1. https://arxiv.org/pdf/2210.02747
+2. https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html
+3. https://arxiv.org/abs/2412.06264
