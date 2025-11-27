@@ -55,7 +55,7 @@ Giả sử $x$ là một biến ngẫu nhiên liên tục trong không gian $\ma
 
 b. Nguyên lý bảo toàn xác suất
 
-Theo định nghĩa của xác suất, xác suất để $y$ rơi vào một tập hợp $S \subset \mathbb{R}^d$ phải bằng xác suất để $x$ rơi vào tập hợp nguồn tương ứng $\phi^{-1}(S)$. Với mọi tập đo được $S$, ta có:$$\int_{S} p_1(y) \, dy = P(y \in S) = P(x \in \phi^{-1}(S)) = \int_{\phi^{-1}(S)} p_0(x) \, dx ~~~ (2.1) $$
+Theo định nghĩa của xác suất, xác suất để $y$ rơi vào một tập hợp $S \subset \mathbb{R}^d$ phải bằng xác suất để $x$ rơi vào tập hợp nguồn tương ứng $\phi^{-1}(S)$. Với mọi tập đo được $S$, ta có:$$\int_{S} p_1(y) \, dy = P(y \in S) = P(x \in \phi^{-1}(S)) = \int_{\phi^{-1}(S)} p_0(x) \, dx \tag{2.1} $$
 
 c. Định lý đổi biến trong tích phân (Change of Variables Theorem)
 
@@ -71,13 +71,13 @@ Ta lại có:
 $$ J_{\psi}(y) = J_{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
 
 Áp dụng định lý này vào vế phải của phương trình bảo toàn xác suất:
-$$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy ~~~ (2.2)$$
+$$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy \tag{2.2}$$
 
 Kết hợp (2.1) và (2.2) lại, ta được phương trình sau:
 $$\int_{S} p_1(y) \, dy = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy$$
 
 Vì đẳng thức này đúng với mọi tập $S$ đo được, nên hàm dưới dấu tích phân phải bằng nhau. Do đó ta thu được đẳng thức cuối cùng sau:
-$$ p_1(y) = p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| ~~~ (2.3) $$
+$$ p_1(y) = p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \tag{2.3} $$
 
 Trong đó:
 
@@ -88,7 +88,7 @@ Trong đó:
 
 Để dễ tính toán hơn, công thức $(2.3)$ có thể được viết lại dưới dạng:
 
-$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y) ~~~ (2.4)$$
+$$p_1(y) = \frac{p_0(x)}{\left|\det\left[\frac{\partial \phi}{\partial x}(x)\right]\right|} \quad \text{với } x = \phi^{-1}(y) \tag{2.4}$$
 
 ### 2.3. Maximum Likelihood Estimation (MLE)
 
@@ -101,7 +101,7 @@ b\. Likelihood Function
 Giả sử ta có các điểm dữ liệu $D = {x_1, x_2, ..., x_n}$ và đã biết các điểm dữ liệu này tuân theo phân phối xác suất nào đó có thể mô tả bằng tham số $\theta$.
 
 MLE có công việc là sẽ tìm ra $\theta$ sao cho xác suất sau đây là giá trị lớn nhất:
-$$ \theta = \max_{\theta} p(\mathbf{x_1}, \dots, \mathbf{x_n} | \theta) ~~~~ (2.5)$$
+$$ \theta = \max_{\theta} p(\mathbf{x_1}, \dots, \mathbf{x_n} | \theta) \tag{2.5}$$
 
 Với giả định là các điểm các biến cố đôi một độc lập với nhau, nên xác suất để thu được tập quan sát $D$ bằng tích của xác suất các điểm riêng lẻ.
 
@@ -117,7 +117,7 @@ Trong thực tế tính toán, hàm $L(\theta)$ thường là tích của nhiề
 Hàm Log-Likelihood được tính bằng:
 $$\mathcal{L}(\theta) = \log L(\theta) = \log \left( \prod_{i=1}^N p(x_i|\theta) \right)$$
 Áp dụng quy tắc Logarit của một tích $\log(a \cdot b) = \log a + \log b$, ta biến tích thành tổng:
-$$\mathcal{L}(\theta) = \sum_{i=1}^N \log p(x_i|\theta)~~~(2.6)$$
+$$\mathcal{L}(\theta) = \sum_{i=1}^N \log p(x_i|\theta) \tag{2.6}$$
 
 ### 2.4. Hàm Lipschitz
 
@@ -127,6 +127,7 @@ Một hàm số $f$ được gọi là Lipschitz liên tục trên một miền 
 $$|f(x_1) - f(x_2)| \le K |x_1 - x_2|$$
 
 b\. Ý nghĩa:
+
 Điều kiện này mạnh hơn điều kiện hàm số chỉ liên tục. Nó đảm bảo rằng độ dốc, hay đạo hàm của hàm số được chặn trên bởi hằng số $K$. Điều này có nghĩa là hàm số không thể thay đổi quá nhanh.
 
 ### 2.5. Định lý Tồn tại và Duy nhất Picard-Lindelöf (The Picard-Lindelöf Theorem)
@@ -137,7 +138,7 @@ a\. Giới thiệu
 
 Bài toán xét dạng IVP trong bài toán phương trình vi phân (ODE) như sau:
 
-$$\frac{dy}{dt} = f(t, y), \quad y(t_0) = y_0 ~~~~ (IVP)$$
+$$\frac{dy}{dt} = f(t, y), \quad y(t_0) = y_0 \tag{IVP}$$
 
 b\. Phát biểu:
 
@@ -157,7 +158,7 @@ Transport equation (hay continuity equation) là một phương trình đạo h�
 b\. Phát biểu
 Ta ký hiệu $p_t(x)$ là hàm mật độ xác suất của x tại thời điểm $t$.
 
-Dạng tổng quát của Transport Equation mô tả sự thay đổi theo thời gian của một hàm mật độ xác suất \( p_t(x) \) dưới tác động của một trường vận tốc \( v_t(x) \):
+Dạng tổng quát của Transport Equation mô tả sự thay đổi theo thời gian của một hàm mật độ xác suất \( p_t(x) \) dưới tác động của một trường vận tốc \( u_t(x) \):
 
 $$
 \frac{\partial p_t(x)}{\partial t} + \nabla \cdot \left( p_t \, u_t(x) \right) = 0.
@@ -197,7 +198,7 @@ trong đó:
 Hiểu một cách trực quan:
 
 * $u_k(x)$ quyết định hướng và độ lớn của dịch chuyển,
-* $\delta$ đảm bảo mỗi bước là “nhỏ”, nhờ đó chuỗi các bước có thể xấp xỉ một dòng chảy liên tục (continuous flow),
+* $\delta$ đảm bảo mỗi bước là “nhỏ”, nhờ đó chuỗi các bước có thể xấp xỉ một flow liên tục (continuous flow),
 * việc cộng thêm $x$ giúp mỗi $\phi_k$ giống với một bước Euler rời rạc hóa của một phương trình vi phân.
 
 Do đó, mẫu sẽ được cập nhật theo chuỗi:
@@ -246,7 +247,7 @@ $$
 với $\delta > 0$ là một bước nhỏ. Ta có thể hiểu rằng mỗi phép biến đổi $\phi$ di chuyển điểm $x$ dọc theo hướng của trường vận tốc $u$, với độ dài bước tỉ lệ với $\delta$. Từ biểu thức trên, ta suy ra:
 
 $$
-\frac{\phi(x) - x}{\delta} = u(x) ~~~ (3.1)
+\frac{\phi(x) - x}{\delta} = u(x) \tag{3.1}
 $$
 
 Đẳng thức (3.1) có dạng một xấp xỉ sai phân hữu hạn cho đạo hàm của một hàm theo thời gian. Điều này mở đường để diễn giải chuỗi các Residual Flow như xấp xỉ rời rạc của một continuous flow.
@@ -284,7 +285,7 @@ Giải phương trình vi phân này từ $t = 0$ đến thời điểm bất k�
 
 $$
 x_t \triangleq \phi_t(x_0)
-= x_0 + \int_{0}^t u_s(x_s), ds ~~~(3.2)
+= x_0 + \int_{0}^t u_s(x_s), ds \tag{3.2}
 $$
 
 Biểu thức (3.2) chính là dạng tích phân của nghiệm ODE:
@@ -301,7 +302,11 @@ Qua trên, ta đã xác định được hàm mapping $\phi_t$, tuy nhiên ta ch
 
 Sự thay đổi mật độ xác suất $\log p_t(x_t)$ theo thời gian $t$ được tính thông qua công thức Phương trình Liên tục bằng cách sử dụng độ phân kỳ của trường vectơ $u_t$:
 
-$$\frac{\partial}{\partial t} \log p_t(x_t) = - (\nabla \cdot (u_t p_t))(x_t) = - \mathrm{div}\ u_t p_t(x_t)$$
+$$
+\frac{\partial}{\partial t} \log p_t(x_t) = 
+- (\nabla \cdot (u_t p_t))(x_t) = - \mathrm{div}\ u_t p_t(x_t)
+\tag{3.3}
+$$
 
 Suy ra, vi phân toàn phần của $p_t(x_t)$ được tính như sau:
 
@@ -317,12 +322,16 @@ $$
 Suy ra:
 
 $$
-\frac{d}{d t} \log p_t(x_t) = \frac{1}{p_t(x_t)} \frac{d}{d t} p_t(x_t) = - (\nabla \cdot u_t)(x_t).
+\frac{d}{d t} \log p_t(x_t) = \frac{1}{p_t(x_t)} \frac{d}{d t} p_t(x_t) = 
+- (\nabla \cdot u_t)(x_t).
+\tag{3.4}
 $$
 
 Từ đó, log-density của phân phối dữ liệu $p_1(x)$ (tại $t=1$) được tính bằng cách tích phân độ phân kỳ theo thời gian:
 
-$$\log p_\theta(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_\theta)(x_t) d t$$
+$$\log p_\theta(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_\theta)(x_t) d t
+\tag{3.5}
+$$
 
 Quá trình này chỉ yêu cầu tính toán độ phân kỳ (divergence) của trường vectơ $u_\theta$, thay vì toàn bộ định thức Jacobi của một phép biến đổi phức tạp, giúp việc tính toán hiệu quả hơn.
 
@@ -338,7 +347,7 @@ Ngoài ra, CNF giúp yêu cầu Lipschitz dễ thỏa mãn hơn. Trong residual 
 Continuous Normalizing Flows (CNFs) được huấn luyện bằng cách cực đại hóa log-likelihood của dữ liệu (maximum likelihood estimation):
 
 $$
-\mathcal{L}(\theta) = \mathbb{E}_{x \sim q_{\text{data}}} \left[ \log p_1(x) \right] \tag{4.1}
+\mathcal{L}(\theta) = \mathbb{E}_{x \sim q_{\text{data}}} \left[ \log p_1(x) \right]
 $$
 
 trong đó:
@@ -348,7 +357,7 @@ trong đó:
 
 Để tính được giá trị log-likelihood này cũng như gradient của nó theo $\theta$, ta cần giải hệ phương trình vi phân thường (ODE) mô tả sự tiến hóa liên tục của các mẫu $x(t)$ từ phân phối cơ sở $p_0$ (thường là Gaussian chuẩn) đến phân phối đích $p_1$. Cụ thể, việc tính $\log p_t(x_t)$ tại mọi thời điểm $t$ đều yêu cầu:
 - Tích phân ngược ODE để đưa các điểm dữ liệu từ $t=1$ trở về $t=0$,
-- Tính toán trace của Jacobian (tức độ phân kỳ $\nabla_x \cdot u_\theta(t, x)$) tại nhiều bước thời gian.
+- Tính toán trace của Jacobian (tức độ phân kỳ $\nabla_x \cdot u_\theta(t, x)$) tại nhiều thời gian $t$.
 
 Những yêu cầu trên dẫn tới hai khó khăn lớn trong quá trình huấn luyện:
 
@@ -368,58 +377,140 @@ Residual flows có thể huấn luyện trực tiếp bằng maximum likelihood,
 Và đây chính là động lực dẫn đến phương pháp Flow Matching (FM). Flow Matching là một kỹ thuật huấn luyện simulation-free cho CNF: thay vì giải phương trình vi phân để tạo dữ liệu khớp với phân phối xác suất, ta xây dựng trực tiếp một mục tiêu hồi quy cho trường vector tham số $u_\theta(t,x)$. Cụ thể, hàm mất mát được xây dựng như sau:
 
 $$
-\mathcal{L}(\theta)
+\mathcal{L_{FM}}(\theta)
 = \mathbb{E}_{t \sim \mathcal{U}[0,1],  ~ x \sim p_t}
 \left[
 |u_\theta(t,x) - u(t,x)|^2
-\right].
+\right]
+\tag{4.1}
 $$
 
-Ở đây, $u(t,x)$ là một vector field mà ta kỳ vọng sẽ sinh ra một probability path $p_t$ nội suy giữa phân phối gốc $p_0$ và phân phối đích $p_1$. Quan hệ giữa chúng thỏa mãn:
+Ở công thức (4.1), $u(t,x)$ là một vector field mà ta kỳ vọng sẽ sinh ra một probability path $p_t$ nội suy giữa phân phối gốc $p_0$ và phân phối đích $p_1$. Quan hệ giữa chúng thỏa mãn (3.5):
 
 $$
-\log p_1(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_t)(x_t) dt.
+\log p_1(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_t)(x_t) dt 
 $$
 
-Diễn giải ngắn gọn: Flow Matching đơn giản là thực hiện regression của $u_\theta(t,x)$ lên trường vector mục tiêu $u(t,x)$ tại mọi thời điểm $t \in [0,1]$.
+Từ đấy, ta thấy Flow Matching sẽ thực hiện phép hồi quy cho $u_\theta(t,x)$ lên trường vector mục tiêu $u(t,x)$ tại mọi thời điểm $t \in [0,1]$.
 
 Tuy nhiên, điều này đặt ra một vấn đề quan trọng: nếu ta có thể biết được $u(t,x)$, thì rõ ràng sẽ không cần phải huấn luyện mô hình để để dự đoán nữa. Điểm khác biệt của Flow Matching nằm ở chỗ,  ta có thể xây dựng một mục tiêu thích hợp cho $u_\theta(t,x)$ mà không cần phải tính tường minh giá trị vector $u(t,x)$ thực sự. Đó là thay vì học flow trên toàn dữ liệu, ta xây dựng các flow cục bộ dựa trên các cặp mẫu $(x_0, x_1)$ và dạy mô hình bắt chước chúng.
 
 ### 4.2. Conditional Flow
 
+Từ công thức về quan hệ giữa $p_t$ và $u_t$ ở (3.3), việc xây dựng $p_t$ và $u_t$ sẽ tương đương với nhau, tức nếu ta xây dựng được $u_t$ thì sẽ dựng được $p_t$ và ngược lại.  
+
 Trong bài báo Flow Matching For Generative Modeling của Lipman (2023), ông và các cộng sự đã đề xuất một phương pháp để xây dựng flow matching, đó là dựa trên việc xây dựng và kết hợp các đường xác suất (tức probability path) $p_t$ và trường $u_t$ dựa trên xác suất có điều kiện.
 
-a\. Đường xác suất có điều kiện
+a\. Đường xác suất $p_t$ có điều kiện và vector $u_t$ có điều kiện
+
+Nhắc lại đẳng thức (3.3):
+$$
+\frac{\partial p_t(x)}{\partial t} = - \nabla \cdot \big( u_t p_t(x ) \big).
+$$
+Từ đây ta có thể nhận xét rằng việc xây dựng $p_t$ và $u_t$ sẽ tương đương nhau: Ứng với mỗi $p_t$ có duy nhất một $u_t$ thỏa mãn việc sinh ra $p_t$.
 
 Giả sử ta có một mẫu dữ liệu đích cụ thể $y_1 \sim q(y)$. Ta định nghĩa $p_t(x|y_1)$ là một đường xác suất có điều kiện (conditional probability path) mô tả quá trình biến đổi của biến $x$ theo thời gian $t \in [0, 1]$, thỏa mãn hai biên:
 * Tại thời điểm khởi đầu $t=0$ :  $p_0(x|y_1) = p(x)$, trong đó $p(x)$ là phân phối nguồn (ví dụ: phân phối $\mathcal{N}(x|0, I)$).
 * Tại thời điểm kết thúc $t=1$ :  $p_1(x|y_1)$ là một phân phối đích, tập trung xung quanh mẫu dữ liệu $y_1$ (ví dụ: một phân phối chuẩn với phương sai $\sigma$ rất nhỏ: $\mathcal{N}(x|y_1, \sigma^2 I)$).
 
-Từ các đường xác suất có điều kiện này, ta có thể khôi phục lại đường xác suất cận biên (marginal probability path) $p_t(x)$ cho toàn bộ không gian dữ liệu bằng cách lấy tích phân biên qua phân phối dữ liệu $q(y_1)$:
+Tương ứng với mỗi đường xác suất có điều kiện $p_t(x|y_1)$, tồn tại một trường vector có điều kiện $u_t(x|y_1): \mathbb{R}^d \rightarrow \mathbb{R}^d$ đóng vai trò sinh ra flow đó. Dưới điều kiện ta đã biết trước đích đến $x_1 = y_1$ của quá trình chuyển dịch, ta có thể dễ dàng xây dựng các đường xác suất và trường vector tương ứng. Ví dụ giả sử điểm đến tại $t = 1$ là $x_1 = y_1$, ta có thể xây dựng công thức như sau:
 
-$$p_t(x) = \int_{y_1} p_t(x|y_1)q(y_1)dy_1$$
+$$
+x_t = (1 - t) * x_0 + t * x_1
+\\
+u_t = \frac{d x_t}{d t} = x_1 - x_0
+$$
 
-Công thức này cho thấy $p_t(x)$ thực chất là một phân phối hỗn hợp (mixture distribution). Đặc biệt tại $t=1$, $p_1(x)$ sẽ có thể xấp xỉ tốt đối với phân phối dữ liệu thực tế $q(x)$ nhờ sự tổng hợp của các phân phối con tập trung quanh từng điểm dữ liệu.
+b\. Đường xác suất và trường vector tổng quát
 
-b\. Xây dựng trường Vector $u_t$
+Qua các công thức trên ta thấy rằng để tính $u_t$ và $p_t$ trong điều kiện đã biết điểm đến là không khó. Như vậy bài toán bây giờ đặt ra là, làm sao từ các flow có điều kiện này, ta tính ra được flow tổng trên toàn tập dữ liệu. Với đường xác suất tổng quát, từ các đường xác suất có điều kiện này, ta có thể khôi phục lại đường xác suất cận biên (marginal probability path) $p_t(x)$ cho toàn bộ không gian dữ liệu bằng cách lấy tích phân biên qua phân phối dữ liệu $q(y_1)$:
 
-Tương ứng với mỗi đường xác suất có điều kiện $p_t(x|y_1)$, tồn tại một **trường vector có điều kiện** $u_t(x|y_1): \mathbb{R}^d \rightarrow \mathbb{R}^d$ đóng vai trò sinh ra dòng chảy đó. Vì $p_t(x|y_1)$ được thiết kế đơn giản (ví dụ: đường thẳng Gaussian), $u_t(x|y_1)$ thường có dạng đóng và dễ dàng tính toán.
+$$p_t(x) 
+ = \mathbb{E}_{y_1 \sim q} \left[ p_t(x \mid y_1) \right] 
+ = \int p_{t \mid 1}(x|y_1)q(y_1)dy_1
+ \tag{4.2}
+ $$
 
-Vấn đề đặt ra là: *Làm thế nào để tổng hợp các trường vector cục bộ này thành một trường vector toàn cục $u_t(x)$ điều khiển đường xác suất biên $p_t(x)$?*
+Công thức này xác định $p_t(x)$ bằng cách coi nó là sự tổng hợp của các phân phối xác suất. Đặc biệt tại $t=1$, $p_1(x)$ sẽ có thể xấp xỉ tốt đối với phân phối dữ liệu thực tế $q(x)$ nhờ sự tổng hợp của các phân phối con tập trung quanh từng điểm dữ liệu.
 
-Lipman (2023) đã chứng minh rằng không thể chỉ đơn giản lấy trung bình cộng các vector. Thay vào đó, **trường vector biên** (marginal vector field) được định nghĩa chính xác thông qua công thức kỳ vọng có trọng số như sau (giả sử $p_t(x)>0$):
+Tuy nhiên, Lipman (2023) đã chứng minh rằng không thể chỉ đơn giản lấy trung bình cộng của tất cả các vector có điều kiện đã tính được. Ở đây, trường vector tại biên (marginal vector field) được định nghĩa thông qua công thức kỳ vọng có trọng số như sau (giả sử $p_t(x) > 0$) như sau:
 
-$$u_t(x) = \int u_t(x|y_1) \frac{p_t(x|y_1)q(y_1)}{p_t(x)} dy_1$$
+$$u_t(x)  = \mathbb{E}_{y_1 \sim p_{1 \mid t}} \left[ p_t(x \mid y_1) \right] = \int u_t(x|y_1) \frac{p_t(x|y_1)q(y_1)}{p_t(x)} dy_1 \tag{4.3}$$
 
-Trong đó, tỷ số $\frac{p_t(x|y_1)q(y_1)}{p_t(x)}$ đóng vai trò như xác suất hậu nghiệm (posterior), xác định mức độ đóng góp của dòng chảy từ $y_1$ vào vị trí $x$ tại thời điểm $t$.
+Trong đó, tỷ số $\frac{p_t(x|y_1)q(y_1)}{p_t(x)}$ đóng vai trò như xác suất hậu nghiệm (posterior), xác định mức độ đóng góp của flow từ điểm $y_1$ vào vị trí $x$ tại thời điểm $t$.
 
-**3. Kết luận quan trọng (Key Observation)**
+Để chứng minh công thức kết quả vector tại biên $u_t$ nhận được sẽ sinh ra đường xác suất tại biên $p_t$, đầu tiên, Lipman đã chứng minh đẳng thức (3.3) đúng với đường xác suất có điều kiện và trường vector có điều kiện:
 
-Điểm đột phá của nghiên cứu này nằm ở mối liên hệ bất ngờ giữa các thành phần trên:
+$$
+\frac{\partial p_t(x \mid x_1)}{\partial t} = - \nabla \cdot \big( u_t p_t(x \mid x_1) \big)
+\tag{4.4}
+$$
 
-> **Trường vector biên $u_t(x)$ được định nghĩa bởi phương trình tích phân trên chính là trường vector sinh ra đường xác suất biên $p_t(x)$.**
+Sau đó triển khai công thức (4.2) và (4.4) như sau:
 
-Quan sát này có ý nghĩa thực tiễn to lớn: Nó cho phép chúng ta phá vỡ trường vector biên phức tạp (cái mà ta cần tìm nhưng không biết) thành các trường vector có điều kiện đơn giản (cái mà ta hoàn toàn có thể thiết kế). Đây chính là cơ sở lý thuyết để xây dựng hàm mục tiêu **Conditional Flow Matching**, cho phép huấn luyện mô hình sinh dữ liệu một cách hiệu quả mà không cần giải các phương trình vi phân phức tạp trong quá trình huấn luyện.
+$$
+\begin{align*}
+\frac{\partial p_t(x)}{\partial t}
+&= \frac{\partial}{\partial t} \int p_t(x \mid y_1) q(y_1)\, dy_1 \\
+&= \int \frac{\partial}{\partial t}\big( p_t(x \mid y_1) \big) q(y_1)\, dy_1 \\
+&= - \int \nabla \cdot \big( u_t(x \mid y_1) p_t(x \mid y_1) \big) q(y_1)\, dy_1 \\
+&= - \nabla \cdot \int u_t(x \mid y_1) p_t(x \mid y_1) q(y_1)\, dy_1 \\
+&= - \nabla \cdot \left(
+        \int u_t(x \mid y_1)\,
+        \frac{p_t(x \mid y_1) q(y_1)}{p_t(x)}\,
+        p_t(x)\, dy_1 
+     \right) \\
+&= - \nabla \cdot \bigg(
+        \left[
+            \int 
+            u_t(x \mid y_1)
+            \frac{p_t(x \mid y_1) q(y_1)}{p_t(x)}\, dy_1 
+        \right]
+        p_t(x)
+     \bigg) \\
+&= - \nabla \cdot \big( u_t(x)\, p_t(x) \big)
+\tag{Q.E.D}
+\end{align*}
+$$
+
+![](images/conditional-fm-relationship-1.png)
+![](images/conditional-fm-relationship-2.png)
+
+c\. Hàm mất mát
+
+Thay (4.3) vào (4.1), ta được kết quả sau:
+$$
+\begin{equation*}
+\mathcal{L}_{\mathrm{CFM}}(\theta) = \mathbb{E}_{t \sim \mathcal{U}[0, 1], y_1 \sim q, x_t \sim p_t(x \mid y_1)}\left[\|
+u_\theta(t, x) - u_t(x \mid y_1) \|^2 \right].
+\end{equation*}
+\tag{4.5}
+$$
+
+Ta sẽ chứng minh rằng:
+$$
+\begin{equation*}
+\nabla_\theta \mathcal{L}_{\mathrm{FM}}(\theta) = \nabla_\theta \mathcal{L}_{\mathrm{CFM}}(\theta),
+\end{equation*} 
+\tag{4.6}
+$$
+
+Thật vậy,
+
+$$
+\|u_\theta(t, x) - u_t(x)\|^2 = \|u_\theta(t, x)\|^2 + \|u_t(x)\|^2 - 2 \langle u_\theta(t, x), u_t(x) \rangle.
+$$
+
+
+$$
+\begin{align}
+    \mathbb{E}_{x \sim p_t} ~\langle u_\theta(t, x), u_t(x) \rangle 
+    &= \int \langle u_\theta(t, x), \int u_t(x|x_1) \frac{p_t(x \mid x_1)q(x_1)}{p_t(x)} dx_1 \rangle p_t(x) dx \\
+    &= \int \langle u_\theta(t, x), \int u_t(x \mid x_1) p_t(x \mid x_1)q(x_1) dx_1 \rangle dx \\
+    &= \int \int \langle u_\theta(t, x), u_t(x \mid x_1) \rangle p_t(x \mid x_1)q(x_1) dx_1 dx \\
+    &= \mathbb{E}_{q_1(x_1) p(x \mid x_1)} ~\langle u_\theta(t, x), u_t(x \mid x_1) \rangle.
+    \end{align}
+$$
 ## Tham khảo
 1. https://arxiv.org/pdf/2210.02747
 2. https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html
