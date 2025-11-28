@@ -134,9 +134,9 @@ b\. Ý nghĩa:
 
 a\. Giới thiệu
 
-Định lý tồn tại và duy nhất Picard-Lindelöf, hay có tên khác là Định lý Tồn tại và Duy nhất Cauchy-Lipschitz, là nền tảng trong lý thuyết Phương trình vi phân thường (ODEs). Nó giải quyết vấn đề về sự tồn tại và duy nhất của nghiệm đối với một bài toán giá trị ban đầu (Initial Value Problem - IVP) cho ODE cấp 1.
+Định lý tồn tại và duy nhất Picard-Lindelöf, hay có tên khác là Định lý Tồn tại và Duy nhất Cauchy-Lipschitz, là nền tảng trong lý thuyết Phương trình vi phân thường. Nó giải quyết vấn đề về sự tồn tại và duy nhất của nghiệm đối với một bài toán giá trị ban đầu (Initial Value Problem, IVP) cho ODE cấp 1.
 
-Bài toán xét dạng IVP trong bài toán phương trình vi phân (ODE) như sau:
+Bài toán xét dạng IVP trong bài toán phương trình vi phân như sau:
 
 $$\frac{dy}{dt} = f(t, y), \quad y(t_0) = y_0 \tag{IVP}$$
 
@@ -150,7 +150,7 @@ c\. Ý nghĩa
 
 Trong việc sử dụng flow như mô hình sinh, tính lipschitz của hàm dịch chuyển $u_t$ đảm bảo rằng flow sẽ có nghiệm duy nhất. Tính duy nhất này đảm bảo cho tính chất khả nghịch trên miền xác định.
 
-### 2.6. Transport Equation
+### 2.6. Transport Equation / Continuity Equation
 
 a\. Giới thiệu
 Transport equation (hay continuity equation) là một phương trình đạo hàm riêng mô tả cách một đại lượng, thường là mật độ xác suất, thay đổi theo thời gian khi nó được vận chuyển bởi một velocity field. Đây là mô hình toán học chuẩn để mô tả sự thay đổi của phân phối trong các hệ động lực liên tục.
@@ -158,7 +158,7 @@ Transport equation (hay continuity equation) là một phương trình đạo h�
 b\. Phát biểu
 Ta ký hiệu $p_t(x)$ là hàm mật độ xác suất của x tại thời điểm $t$.
 
-Dạng tổng quát của Transport Equation mô tả sự thay đổi theo thời gian của một hàm mật độ xác suất \( p_t(x) \) dưới tác động của một trường vận tốc \( u_t(x) \):
+Dạng tổng quát của Transport Equation mô tả sự thay đổi theo thời gian của một hàm mật độ xác suất $ p_t(x) $ dưới tác động của một trường vận tốc $u_t(x) $:
 
 $$
 \frac{\partial p_t(x)}{\partial t} + \nabla \cdot \left( p_t \, u_t(x) \right) = 0.
@@ -311,12 +311,12 @@ $$
 Suy ra, vi phân toàn phần của $p_t(x_t)$ được tính như sau:
 
 $$
-
+\begin{align*}
 \frac{d}{d t} p_t(x_t) 
-= \frac{\partial}{\partial_t} p_t(x_t) + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
-= - p_t(x_t) (\nabla \cdot u_t)(x_t) - \langle \nabla_{x_t} p_t(x_t), u_t(x_t) \rangle + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
-= - p_t(x_t) (\nabla \cdot u_t)(x_t).
-
+&= \frac{\partial}{\partial_t} p_t(x_t) + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
+&= - p_t(x_t) (\nabla \cdot u_t)(x_t) - \langle \nabla_{x_t} p_t(x_t), u_t(x_t) \rangle + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
+&= - p_t(x_t) (\nabla \cdot u_t)(x_t).
+\end{align*}
 $$
 
 Suy ra:
@@ -364,7 +364,7 @@ Những yêu cầu trên dẫn tới hai khó khăn lớn trong quá trình hu�
 - Chi phí tính toán rất cao: mỗi bước lan truyền xuôi và lan truyền ngược đều đòi hỏi giải số ODE hàng trăm đến hàng nghìn bước thời gian bằng các bộ giải như Dopri5, RK45, v.v.
 - Ước lượng độ phân kỳ trong không gian chiều cao: các phương pháp thông thường thường có phương sai rất lớn khi chiều dữ liệu tăng, khiến việc huấn luyện trở nên không ổn định hoặc cực kỳ chậm.
 
-Mặc dù CNFs có khả năng biểu diễn cực kỳ mạnh — vì chúng tham số hóa một lớp rất rộng các flow liên tục và do đó có thể xấp xỉ gần như mọi phân phối xác suất liên tục — nhưng tốc độ huấn luyện lại là điểm nghẽn nghiêm trọng do phải thực hiện phép tích phân ODE ở mỗi iteration của tối ưu. Đây là lúc hướng nghiên cứu Flow Matching ra đời
+Mặc dù CNFs có khả năng biểu diễn cực kỳ mạnh, vì chúng tham số hóa một lớp rất rộng các flow liên tục và do đó có thể xấp xỉ gần như mọi phân phối xác suất liên tục nhưng tốc độ huấn luyện lại là điểm nghẽn nghiêm trọng do phải thực hiện phép tích phân ODE ở mỗi iteration của tối ưu. Đây là lúc hướng nghiên cứu Flow Matching ra đời
 
 ## 4. Flow Matching
 
@@ -391,17 +391,17 @@ $$
 \log p_1(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_t)(x_t) dt 
 $$
 
-Từ đấy, ta thấy Flow Matching sẽ thực hiện phép hồi quy cho $u_\theta(t,x)$ lên trường vector mục tiêu $u(t,x)$ tại mọi thời điểm $t \in [0,1]$.
+Từ đấy, ta thấy Flow Matching sẽ thực hiện phép hồi quy cho $u_\theta(t,x)$ lên trường vector mục tiêu $u(t,x)$ tại mọi thời điểm $t \in [0,1]$. Một mô hình mạng nơ-ron (Neural network) sẽ được sử dụng để dự đoán trường vector $u(t,x)$ bằng $u_\theta(t,x)$.
 
 Tuy nhiên, điều này đặt ra một vấn đề quan trọng: nếu ta có thể biết được $u(t,x)$, thì rõ ràng sẽ không cần phải huấn luyện mô hình để để dự đoán nữa. Điểm khác biệt của Flow Matching nằm ở chỗ,  ta có thể xây dựng một mục tiêu thích hợp cho $u_\theta(t,x)$ mà không cần phải tính tường minh giá trị vector $u(t,x)$ thực sự. Đó là thay vì học flow trên toàn dữ liệu, ta xây dựng các flow cục bộ dựa trên các cặp mẫu $(x_0, x_1)$ và dạy mô hình bắt chước chúng.
 
-### 4.2. Conditional Flow
+### 4.2. Conditional Flow Matching
 
 Từ công thức về quan hệ giữa $p_t$ và $u_t$ ở (3.3), việc xây dựng $p_t$ và $u_t$ sẽ tương đương với nhau, tức nếu ta xây dựng được $u_t$ thì sẽ dựng được $p_t$ và ngược lại.  
 
 Trong bài báo Flow Matching For Generative Modeling của Lipman (2023), ông và các cộng sự đã đề xuất một phương pháp để xây dựng flow matching, đó là dựa trên việc xây dựng và kết hợp các đường xác suất (tức probability path) $p_t$ và trường $u_t$ dựa trên xác suất có điều kiện.
 
-a\. Đường xác suất $p_t$ có điều kiện và vector $u_t$ có điều kiện
+#### 4.2.1. Đường xác suất $p_t$ có điều kiện và vector $u_t$ có điều kiện
 
 Nhắc lại đẳng thức (3.3):
 $$
@@ -421,7 +421,7 @@ x_t = (1 - t) * x_0 + t * x_1
 u_t = \frac{d x_t}{d t} = x_1 - x_0
 $$
 
-b\. Đường xác suất và trường vector tổng quát
+#### 4.2.2. Đường xác suất và trường vector tổng quát
 
 Qua các công thức trên ta thấy rằng để tính $u_t$ và $p_t$ trong điều kiện đã biết điểm đến là không khó. Như vậy bài toán bây giờ đặt ra là, làm sao từ các flow có điều kiện này, ta tính ra được flow tổng trên toàn tập dữ liệu. Với đường xác suất tổng quát, từ các đường xác suất có điều kiện này, ta có thể khôi phục lại đường xác suất cận biên (marginal probability path) $p_t(x)$ cho toàn bộ không gian dữ liệu bằng cách lấy tích phân biên qua phân phối dữ liệu $q(y_1)$:
 
@@ -476,7 +476,43 @@ $$
 ![](images/conditional-fm-relationship-1.png)
 ![](images/conditional-fm-relationship-2.png)
 
-c\. Hàm mất mát
+Để có thể mô tả trực quan hơn, ta xét việc áp dụng bài toán chuyển đổi phân phối Gauss thành 1 phân phối Gauss (G-to-G) khác như sau:
+
+$$
+\begin{equation}
+\tag{G-to-G}
+\begin{split}
+p_0 = \mathcal{N}([-\mu, 0], I) \quad & \text{và} \quad p_1 = \mathcal{N}([+\mu, 0], I) \\
+\text{với} \quad \phi_t(x_0 \mid x_1) &= (1 - t) x_0 + t x_1
+\end{split}
+\end{equation}
+$$
+
+Trong hình dưới, 2 phân phối Gauss của ta là 2 cụm điểm ở 2 bên trái phải của ảnh. Các đường nối các điểm giữa chúng là một ví dụ của các đường được tạo nên nhờ vết do $u_t(x|y_1)$ tạo ra khi di chuyển các điểm tương ứng. 
+
+![](images/conditional-path-1.png)
+
+Sau đó, ta muốn rằng có thể học được các đường tại biên $\phi_t(x_0)$ với $x_0$ là điểm xuất phát, có phân phối xác suất gốc là $p_0$, sao cho chúng sẽ sinh ra được $x_1 = y_1 = \phi_1(x_0)$. Trong ví dụ đơn giản này, chúng ta có thể tìm được các biểu thức dạng đóng cho $\phi_t(x_0)$ tương ứng với các đường có điều kiện $\phi_t(x_0 \mid x_1)$ của (G-to-G) , như được minh họa bên dưới:
+
+![](images/conditional-path-2.png)
+
+Trên tinh thần đó, ta thực hiện như sau: Chọn điểm $x_0$ ngẫu nhiên từ $p_0$, sau đó ước lượng $u_t(x_0)$ với $t \in [0,1]$: 
+
+$$\begin{equation*}
+\begin{split}
+u_t \big( \phi_t(x_0) \big) 
+&= \mathbb{E}_{p_{1 \mid t}}\left[u_t \big( \phi_t(x_0) \mid x_1 \big)\right] \\
+&\approx \frac{1}{n} \sum_{i = 1}^n u_t \big( \phi_t(x_0) \mid x_1^{(i)} \big) \ \text{với } x_1^{(i)} \sim p_{1 \mid t}(x_1 \mid \phi_t(x_0)).
+\end{split}
+\end{equation*}$$
+
+Trong thực tế, ta không thể biết được cụ thể $p_{1|t}(x_1 \mid x_t)$, nhưng trong bài toán với thiết lập cụ thể này ta lại có biểu thức cần tính này. Do đó, chúng ta có thể trực quan hóa trường vectơ biên $u_t(\phi_t(x_0))$ và các trường vectơ có điều kiện $u_t(\phi_t(x_0) \mid x_1^{(i)})$ cho tất cả các mẫu “dữ liệu” $x_1^{(i)}$, rồi xem chúng khác nhau như thế nào. Điều này được minh hoạ trong hình dưới đây.
+
+|  |  |
+|-------|-------|
+|![](images/marginal-vector-1.png)| ![](images/marginal-vector-2.png)|
+
+#### 4.2.3. Hàm mất mát
 
 Thay (4.3) vào (4.1), ta được kết quả sau:
 $$
@@ -495,22 +531,63 @@ $$
 \tag{4.6}
 $$
 
-Thật vậy,
+Thật vậy, lần lượt triển khai phá bình phương trong mỗi hàm mất mát:
+$$
+\|u_\theta(t, x) - u_t(x \mid y_1)\|^2 = \|u_\theta(t, x)\|^2 + \|u_t(x \mid y_1)\|^2 - 2 \langle u_\theta(t, x), u_t(x \mid y_1) \rangle \tag{4.7}
+$$
 
 $$
-\|u_\theta(t, x) - u_t(x)\|^2 = \|u_\theta(t, x)\|^2 + \|u_t(x)\|^2 - 2 \langle u_\theta(t, x), u_t(x) \rangle.
+\|u_\theta(t, x) - u_t(x)\|^2 = \|u_\theta(t, x)\|^2 + \|u_t(x)\|^2 - 2 \langle u_\theta(t, x), u_t(x) \rangle \tag{4.8}
 $$
 
-
+Thay vào công thức của từng hàm, ta sẽ chứng minh:
 $$
-\begin{align}
+\mathbb{E}_{x \sim p_t} ~\langle u_\theta(t, x), u_t(x) = \mathbb{E}_{y_1 \sim q_1, x \sim p_t(x|y_1)} ~\langle u_\theta(t, x), u_t(x \mid y_1) \rangle
+\\
+\mathbb{E}_{p_t} \|u_\theta(t, x)\|^2 = \mathbb{E}_{q_1(y_1) p(x \mid y_1)} \|u_\theta(t, x)\|^2
+$$
+Thật vậy:
+$$
+\begin{equation*}
+\mathbb{E}_{p_t} \|u_\theta(t, x)\|^2 = \int \|u_\theta(t, x)\|^2 p_t(x \mid y_1) q(y_1) dx d y_1 = \mathbb{E}_{q_1(y_1) p(x \mid y_1)} \|u_\theta(t, x)\|^2
+\end{equation*}
+$$
+$$
+\begin{align*}
     \mathbb{E}_{x \sim p_t} ~\langle u_\theta(t, x), u_t(x) \rangle 
-    &= \int \langle u_\theta(t, x), \int u_t(x|x_1) \frac{p_t(x \mid x_1)q(x_1)}{p_t(x)} dx_1 \rangle p_t(x) dx \\
-    &= \int \langle u_\theta(t, x), \int u_t(x \mid x_1) p_t(x \mid x_1)q(x_1) dx_1 \rangle dx \\
-    &= \int \int \langle u_\theta(t, x), u_t(x \mid x_1) \rangle p_t(x \mid x_1)q(x_1) dx_1 dx \\
-    &= \mathbb{E}_{q_1(x_1) p(x \mid x_1)} ~\langle u_\theta(t, x), u_t(x \mid x_1) \rangle.
-    \end{align}
+    &= \int \langle u_\theta(t, x), \int u_t(x|y_1) \frac{p_t(x \mid y_1)q(y_1)}{p_t(x)} dy_1 \rangle p_t(x) dx \\
+    &= \int \langle u_\theta(t, x), \int u_t(x \mid y_1) p_t(x \mid y_1)q(y_1) dy_1 \rangle dx \\
+    &= \int \int \langle u_\theta(t, x), u_t(x \mid y_1) \rangle p_t(x \mid y_1)q(y_1) dy_1 dx \\
+    &= \mathbb{E}_{y_1 \sim q_1, x \sim p_t(x|y_1)} ~\langle u_\theta(t, x), u_t(x \mid y_1) \rangle. \tag{Q.E.D}
+    \end{align*}
 $$
+
+Vậy từ công thức (4.6), việc tối ưu hàm mất mát của Flow Matching sẽ tương đương với việc tối ưu hàm mất mát của Conditional Flow Matching. Kết quả này cho phép chúng ta huấn luyện CNF để mô phỏng đường xác suất biên $p_t$, qua đó xấp xỉ phân phối dữ liệu chưa biết $q$ tại thời điểm $t=1$, mà không cần đến bất kỳ thông tin trực tiếp về đường xác suất biên hoặc trường vectơ biên. Do đó, vấn đề cốt lõi chỉ còn nằm ở việc xây dựng các đường xác suất có điều kiện cùng các trường vectơ tương ứng sao cho phù hợp.
+
+#### 4.2.4. Hạn chế
+
+Mặc dù CFM là một bước tiến lớn giúp việc huấn luyện CNF trở nên khả thi và ổn định hơn, phương pháp này vẫn tồn tại những điểm yếu và hạn chế nhất định.
+
+1. Vấn đề về Tốc độ Lấy mẫu
+
+Đây là điểm yếu chung của tất cả các mô hình dựa trên phương trình vi phân. Để sinh ra một mẫu dữ liệu mới, mô hình phải giải một phương trình vi phân đi từ thời điểm $t=0$ đến $t=1$. Việc này đòi hỏi sử dụng các cách giải tích phân như Euler hay Runge-Kutta. Quá trình này yêu cầu gọi mạng nơ-ron nhiều lần (hàng chục đến hàng trăm bước) cho mỗi mẫu sinh ra.
+
+2. Vấn đề giao nhau của các đường dẫn 
+
+Trong phần cơ bản của CFM, đặc biệt là khi sử dụng Independent Coupling, ghép cặp ngẫu nhiên giữa nguồn $x_0$ và dữ liệu đích $x_1$, sẽ thường xảy ra việc các đường xác suất có điều kiện sẽ đan xen và cắt nhau chằng chịt.
+
+![](images/g2g-vector-field-samples-cond.png)
+
+Điều này dẫn đến việc, dù mỗi đường xác suất đơn lẻ thì đơn giản (ví dụ: đường thẳng), nhưng trường vector biên $u_t(x)$ mà mạng nơ-ron phải học, lại trở nên cực kỳ phức tạp vì nó là trung bình của các hướng đi hỗn loạn này. Điều này làm cho hàm mục tiêu khó tối ưu hơn và mạng nơ-ron cần dung lượng lớn hơn để học chính xác.
+
+Ngoài ra, do hàm được mạng nơ-ron học $u_\phi(t,x)$ sao cho nó xấp xỉ $u(t, x)$ (trường vector biên).
+Tuy nhiên, $u(t, x)$ được định nghĩa là kỳ vọng (tích phân) của các trường vector có điều kiện: $u_t(x) = \mathbb{E}[u_t(x|z)]$, nên tại các vùng không gian mà các đường $u_t(x|z)$ có phương sai lớn, mạng nơ-ron sẽ có xu hướng học giá trị trung bình và làm "mờ" đi độ chính xác, chi tiết của flow, dẫn đến chất lượng sinh mẫu có thể bị ảnh hưởng.
+
+#### 4.3. Coupling
+
+#### 4.4. Discrete Flow Matching
+
+
 ## Tham khảo
 1. https://arxiv.org/pdf/2210.02747
 2. https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html
