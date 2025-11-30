@@ -1,4 +1,5 @@
 ## 1. Giới thiệu
+
 a\. Bối cảnh
 
 Giả sử chúng ta có các mẫu $x_1, x_2, …, x_n$ từ 1 phân phối $q(x)$, trong đó $q(x)$ là phân phối mà ta chưa biết. Từ các mẫu $x_i$ này, ta sẽ muốn tạo ra một mô hình học xác suất xấp xỉ với $q(x)$. Đây được gọi là generative model, với ý tưởng cốt lõi là cố gắng học quá trình sinh dữ liệu ngoài thực tế.
@@ -22,7 +23,6 @@ $$
 
 Tức ta có thể thu được $p_1$ bằng cách ánh xạ $p_0$ qua $\phi$. Mục tiêu là tối ưu hóa các tham số $\theta$ của hàm biến đổi $\phi_\theta$ sao cho phân phối $p_1$ được tạo ra phân phối kỳ vọng sát nhất với phân phối dữ liệu thực tế.
 
-
 ## 2. Cơ sở toán học
 
 ### 2.1. Khái niệm Flow và Probabilty Path
@@ -35,10 +35,10 @@ $$ \frac{dx}{dt} = v(x,t), \qquad x(0) = x_0. $$
 Ánh xạ $\phi_t$ vì thế đóng vai trò như bản đồ tiến hóa từ phân phối ban đầu sang phân phối mục tiêu trong các mô hình CNF và Flow Matching.
 
 Ta gọi một biến xác suất phụ thuộc theo thời gian $(p_t)_{0 \le t \le 1}$ là một đường xác suất (probability path). Với bài toán hiện tại, đường xác suất quan trọng mà ta cần quan tâm là hàm mật độ xác suất tại biên của mô hình flow $X_t = \phi(X_0)$ tại thời điểm t:
+
 $$
 X_t  \sim p_t
 $$
-
 
 b\. Tính chất
 
@@ -46,12 +46,11 @@ Tính khả nghịch của flow giữ vai trò đặc biệt quan trọng: khi $
 
 Một điều kiện thường được sử dụng để đảm bảo sự tồn tại duy nhất của nghiệm ODE, và dể đảm bảo tính song ánh của flow, là trường vận tốc $u(\cdot,t)$ thỏa mãn điều kiện Lipschitz (theo định lý Picard-Lindelöf được nhắc đến ở sau). Tính Lipschitz này ngăn chặn sự hội tụ của các quỹ đạo khác nhau và bảo đảm rằng mỗi điểm đầu có đúng một quỹ đạo tương ứng, điều kiện cốt lõi để flow đóng vai trò như một phép biến đổi khả nghịch trong continuous normalizing flows và trong phân tích lý thuyết của flow matching.
 
-
 ### 2.2. Cơ sở về định lý Biến đối biến (Change of Variables Theorem)
 
 a. Giả thiết và định nghĩa
 
-Giả sử $x$ là một biến ngẫu nhiên liên tục trong không gian $\mathbb{R}^d$ với hàm mật độ xác suất (PDF) là $p_0(x)$. Ta xác định một biến ngẫu nhiên mới $y$ thông qua một ánh xạ 1-1 (song ánh): $y = \phi(x)$, với $\phi: \mathbb{R}^d \to \mathbb{R}^d$.Giả sử $\phi$ là một diffeomorphism (tức là $\phi$ khả nghịch, và cả $\phi$ lẫn $\phi^{-1}$ đều khả vi liên tục). Khi đó, ục tiêu là tìm hàm mật độ xác suất $p_1(y)$ của biến ngẫu nhiên $y$.
+Giả sử $x$ là một biến ngẫu nhiên liên tục trong không gian $\mathbb{R}^d$ với hàm mật độ xác suất (PDF) là $p_0(x)$. Ta xác định một biến ngẫu nhiên mới $y$ thông qua một ánh xạ 1-1 (song ánh): $y = \phi(x)$, với $\phi: \mathbb{R}^d \to \mathbb{R}^d$. Giả sử $\phi$ là một diffeomorphism (tức là $\phi$ khả nghịch, và cả $\phi$ lẫn $\phi^{-1}$ đều khả vi liên tục). Khi đó, mục tiêu là tìm hàm mật độ xác suất $p_1(y)$ của biến ngẫu nhiên $y$.
 
 b. Nguyên lý bảo toàn xác suất
 
@@ -68,7 +67,7 @@ Trong đó:
 - $J_{\psi}(y)$ là ma trận Jacobi của hàm ngược.
 
 Ta lại có:
-$$ J_{\psi}(y) = J_{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
+$$ J*{\psi}(y) = J*{\phi^{-1}}(y) = \frac{\partial \phi^{-1}}{\partial y}(y) $$
 
 Áp dụng định lý này vào vế phải của phương trình bảo toàn xác suất:
 $$\int_{\phi^{-1}(S)} p_0(x) \, dx = \int_{S} p_0(\phi^{-1}(y)) \left| \det \left[ \frac{\partial \phi^{-1}}{\partial y}(y) \right] \right| \, dy \tag{2.2}$$
@@ -106,11 +105,11 @@ $$ \theta = \max_{\theta} p(\mathbf{x_1}, \dots, \mathbf{x_n} | \theta) \tag{2.5
 Với giả định là các điểm các biến cố đôi một độc lập với nhau, nên xác suất để thu được tập quan sát $D$ bằng tích của xác suất các điểm riêng lẻ.
 
 Như vậy, hàm Likelihood (Likelihood Function), được định nghĩa là $L(\theta)$ là hàm của tham số $\theta$, biểu thị xác suất của dữ liệu $D$ được tạo ra bởi mô hình dưới tham số $\theta$, được tính với công thức như sau:
-$$ L(\theta) = P(D|\theta) = \prod_{i=1}^n p(x_i|\theta) $$
+$$ L(\theta) = P(D|\theta) = \prod\_{i=1}^n p(x_i|\theta) $$
 
 c\. Log Likelihood Function
 
-Trong thực tế tính toán, hàm $L(\theta)$ thường là tích của nhiều số xác suất rất nhỏ (do xác suất nằm trong $[0, 1]$). Điều này dễ dẫn đến lỗi underflow số học trong máy tính (kết quả bằng 0). 
+Trong thực tế tính toán, hàm $L(\theta)$ thường là tích của nhiều số xác suất rất nhỏ (do xác suất nằm trong $[0, 1]$). Điều này dễ dẫn đến lỗi underflow số học trong máy tính (kết quả bằng 0).
 
 Để khắc phục, ta thường tối đa hóa hàm Log-Likelihood, ký hiệu là $\mathcal{L}(\theta)$. Vì hàm Logarit $\log(\cdot)$ là tăng đơn điệu, việc tối đa hóa $L(\theta)$ hoàn toàn tương đương với việc tối đa hóa $\mathcal{L}(\theta)$.
 
@@ -143,6 +142,7 @@ $$\frac{dy}{dt} = f(t, y), \quad y(t_0) = y_0 \tag{IVP}$$
 b\. Phát biểu:
 
 Giả sử $f(t, y)$ là một hàm số xác định trên một hình chữ nhật $R = \{(t, y) : |t - t_0| \le a, |y - y_0| \le b\}$ chứa điểm ban đầu $(t_0, y_0)$.
+
 1.  Điều kiện Tồn tại: Nếu $f(t, y)$ liên tục trên $R$, thì tồn tại ít nhất một nghiệm $y(t)$ cho IVP trên một khoảng thời gian ngắn xung quanh $t_0$.
 2.  Điều kiện Duy nhất: Ngoài ra, nếu $f(t, y)$ thỏa mãn điều kiện Lipschitz liên tục đối với biến $y$ trên $R$ (tức là tồn tại $K \ge 0$ $|f(t, y_1) - f(t, y_2)| \le K |y_1 - y_2|$), thì nghiệm $y(t)$ là duy nhất.
 
@@ -166,6 +166,7 @@ $$
 
 c\. Ý nghĩa
 Transport equation được sử dụng để:
+
 - Mô tả sự biến đổi của một phân phối xác suất khi nó di chuyển theo một trường vận tốc.
 - Làm nền tảng lý thuyết cho các mô hình sinh liên tục như normalizing flows, diffusion models và đặc biệt là flow matching.
 
@@ -191,15 +192,15 @@ $$
 
 trong đó:
 
-* $x$: đầu vào của bước thứ (k),
-* $u_k(x)$: hàm dịch chuyển (hay velocity field) tại bước $k$,
-* $\delta > 0$: một hằng số nhỏ, thể hiện “bước tiến” trong không gian.
+- $x$: đầu vào của bước thứ (k),
+- $u_k(x)$: hàm dịch chuyển (hay velocity field) tại bước $k$,
+- $\delta > 0$: một hằng số nhỏ, thể hiện “bước tiến” trong không gian.
 
 Hiểu một cách trực quan:
 
-* $u_k(x)$ quyết định hướng và độ lớn của dịch chuyển,
-* $\delta$ đảm bảo mỗi bước là “nhỏ”, nhờ đó chuỗi các bước có thể xấp xỉ một flow liên tục (continuous flow),
-* việc cộng thêm $x$ giúp mỗi $\phi_k$ giống với một bước Euler rời rạc hóa của một phương trình vi phân.
+- $u_k(x)$ quyết định hướng và độ lớn của dịch chuyển,
+- $\delta$ đảm bảo mỗi bước là “nhỏ”, nhờ đó chuỗi các bước có thể xấp xỉ một flow liên tục (continuous flow),
+- việc cộng thêm $x$ giúp mỗi $\phi_k$ giống với một bước Euler rời rạc hóa của một phương trình vi phân.
 
 Do đó, mẫu sẽ được cập nhật theo chuỗi:
 
@@ -211,21 +212,23 @@ Mỗi bước chỉ thay đổi mẫu một chút, nhưng ghép lại thì hình
 
 b\. Log-Likelihood của từng bước trong Residual Flow
 
-Do $x_{k} = \phi_k(x_{k-1})$ nên áp dụng công thức (2.3) và (2.6), ta được hàm Log-Likelihood khi dịch $x_{k-1} \to x_k$: 
+Do $x_{k} = \phi_k(x_{k-1})$ nên áp dụng công thức (2.3) và (2.6), ta được hàm Log-Likelihood khi dịch $x_{k-1} \to x_k$:
+
 $$
-\mathcal{L_k(\theta)} = \log p_k(x_{k}|\theta) = 
-\log p_{k-1}(x_{k-1}| \theta) + \log\left| \det \left[ \frac{\partial \phi^{-1}_{k-1}}{\partial x_k}(x_k) \right] \right| 
+\mathcal{L_k(\theta)} = \log p_k(x_{k}|\theta) =
+\log p_{k-1}(x_{k-1}| \theta) + \log\left| \det \left[ \frac{\partial \phi^{-1}_{k-1}}{\partial x_k}(x_k) \right] \right|
 $$
 
 Giải thích:
 
-* $x_{k-1} = \phi_k^{-1}(x_k)$: mẫu trước phép biến đổi,
-* $p_{k-1}(x_{k-1})$: mật độ trước bước (k),
-* Định thức Jacobi của $\phi_k^{-1}$ mô tả sự thay đổi thể tích của không gian khi điểm được biến đổi qua $\phi_k$.
+- $x_{k-1} = \phi_k^{-1}(x_k)$: mẫu trước phép biến đổi,
+- $p_{k-1}(x_{k-1})$: mật độ trước bước (k),
+- Định thức Jacobi của $\phi_k^{-1}$ mô tả sự thay đổi thể tích của không gian khi điểm được biến đổi qua $\phi_k$.
 
 c\. Log-Likelihood tổng của Residual Flow
 
 Thực hiện quy nạp theo $k$, ta thu được công thức Log-likelihood của cả Flow như sau:
+
 $$
 L(\theta)
 = \log p_0(x)
@@ -234,7 +237,6 @@ L(\theta)
   \frac{\partial \phi_k^{-1}}{\partial x_{k+1}}(x_{k+1})
   ] \right|.
 $$
-
 
 ### 3.2. Continuous Normalising Flows (CNFs)
 
@@ -290,12 +292,12 @@ $$
 
 Biểu thức (3.2) chính là dạng tích phân của nghiệm ODE:
 
-* $x_0$ là điểm ban đầu,
-* $u_s(x_s)$ là vận tốc tại vị trí $x_s$ và thời điểm $s$,
-* $\phi_t$ là ánh xạ biến đổi điểm đầu $x_0$ sau thời gian $t$.
+- $x_0$ là điểm ban đầu,
+- $u_s(x_s)$ là vận tốc tại vị trí $x_s$ và thời điểm $s$,
+- $\phi_t$ là ánh xạ biến đổi điểm đầu $x_0$ sau thời gian $t$.
 
 Như vậy, thay vì xem $\phi_t$ là một phép biến đổi tùy ý, ta có thể xem $\phi_t$ như nghiệm của một quá trình biến đổi liên tục sinh ra bởi trường vận tốc $u_t$. Điều này đưa ta đến Continuous Normalizing Flows và cuối cùng là nền tảng lý thuyết của Flow Matching, nơi việc học trường vận tốc $u_t$ trở thành mục tiêu chính thay vì học từng phép biến đổi rời rạc.
- 
+
 c\. Công thức log-density trong CNFs
 
 Qua trên, ta đã xác định được hàm mapping $\phi_t$, tuy nhiên ta chưa biết khi $x_t$ biến đổi theo $u_t$ thì $p_t$ sẽ biến đổi như thế nào.
@@ -303,7 +305,7 @@ Qua trên, ta đã xác định được hàm mapping $\phi_t$, tuy nhiên ta ch
 Sự thay đổi mật độ xác suất $\log p_t(x_t)$ theo thời gian $t$ được tính thông qua công thức Phương trình Liên tục bằng cách sử dụng độ phân kỳ của trường vectơ $u_t$:
 
 $$
-\frac{\partial}{\partial t} \log p_t(x_t) = 
+\frac{\partial}{\partial t} \log p_t(x_t) =
 - (\nabla \cdot (u_t p_t))(x_t) = - \mathrm{div}\ u_t p_t(x_t)
 \tag{3.3}
 $$
@@ -312,7 +314,7 @@ Suy ra, vi phân toàn phần của $p_t(x_t)$ được tính như sau:
 
 $$
 \begin{align*}
-\frac{d}{d t} p_t(x_t) 
+\frac{d}{d t} p_t(x_t)
 &= \frac{\partial}{\partial_t} p_t(x_t) + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
 &= - p_t(x_t) (\nabla \cdot u_t)(x_t) - \langle \nabla_{x_t} p_t(x_t), u_t(x_t) \rangle + \langle \nabla_{x_t} p_t(x_t), \frac{d}{d t} x_t \rangle \\
 &= - p_t(x_t) (\nabla \cdot u_t)(x_t).
@@ -322,19 +324,19 @@ $$
 Suy ra:
 
 $$
-\frac{d}{d t} \log p_t(x_t) = \frac{1}{p_t(x_t)} \frac{d}{d t} p_t(x_t) = 
+\frac{d}{d t} \log p_t(x_t) = \frac{1}{p_t(x_t)} \frac{d}{d t} p_t(x_t) =
 - (\nabla \cdot u_t)(x_t).
 \tag{3.4}
 $$
 
 Từ đó, log-density của phân phối dữ liệu $p_1(x)$ (tại $t=1$) được tính bằng cách tích phân độ phân kỳ theo thời gian:
 
-$$\log p_\theta(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_\theta)(x_t) d t
+$$
+\log p_\theta(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_\theta)(x_t) d t
 \tag{3.5}
 $$
 
 Quá trình này chỉ yêu cầu tính toán độ phân kỳ (divergence) của trường vectơ $u_\theta$, thay vì toàn bộ định thức Jacobi của một phép biến đổi phức tạp, giúp việc tính toán hiệu quả hơn.
-
 
 d\. Ý nghĩa
 
@@ -351,11 +353,13 @@ $$
 $$
 
 trong đó:
+
 - $q_{\text{data}}$ là phân phối dữ liệu thực nghiệm,
 - $p_1(x)$ là phân phối của mô hình sau khi đã được đẩy qua toàn bộ quá trình flow (tức tại thời điểm $t=1$),
 - $\theta$ là tập hợp tham số của trường vector tham số hóa $u_\theta(t, x)$.
 
 Để tính được giá trị log-likelihood này cũng như gradient của nó theo $\theta$, ta cần giải hệ phương trình vi phân thường (ODE) mô tả sự tiến hóa liên tục của các mẫu $x(t)$ từ phân phối cơ sở $p_0$ (thường là Gaussian chuẩn) đến phân phối đích $p_1$. Cụ thể, việc tính $\log p_t(x_t)$ tại mọi thời điểm $t$ đều yêu cầu:
+
 - Tích phân ngược ODE để đưa các điểm dữ liệu từ $t=1$ trở về $t=0$,
 - Tính toán trace của Jacobian (tức độ phân kỳ $\nabla_x \cdot u_\theta(t, x)$) tại nhiều thời gian $t$.
 
@@ -388,30 +392,33 @@ $$
 Ở công thức (4.1), $u(t,x)$ là một vector field mà ta kỳ vọng sẽ sinh ra một probability path $p_t$ nội suy giữa phân phối gốc $p_0$ và phân phối đích $p_1$. Quan hệ giữa chúng thỏa mãn (3.5):
 
 $$
-\log p_1(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_t)(x_t) dt 
+\log p_1(x) = \log p_0(x_0) - \int_0^1 (\nabla \cdot u_t)(x_t) dt
 $$
 
 Từ đấy, ta thấy Flow Matching sẽ thực hiện phép hồi quy cho $u_\theta(t,x)$ lên trường vector mục tiêu $u(t,x)$ tại mọi thời điểm $t \in [0,1]$. Một mô hình mạng nơ-ron (Neural network) sẽ được sử dụng để dự đoán trường vector $u(t,x)$ bằng $u_\theta(t,x)$.
 
-Tuy nhiên, điều này đặt ra một vấn đề quan trọng: nếu ta có thể biết được $u(t,x)$, thì rõ ràng sẽ không cần phải huấn luyện mô hình để để dự đoán nữa. Điểm khác biệt của Flow Matching nằm ở chỗ,  ta có thể xây dựng một mục tiêu thích hợp cho $u_\theta(t,x)$ mà không cần phải tính tường minh giá trị vector $u(t,x)$ thực sự. Đó là thay vì học flow trên toàn dữ liệu, ta xây dựng các flow cục bộ dựa trên các cặp mẫu $(x_0, x_1)$ và dạy mô hình bắt chước chúng.
+Tuy nhiên, điều này đặt ra một vấn đề quan trọng: nếu ta có thể biết được $u(t,x)$, thì rõ ràng sẽ không cần phải huấn luyện mô hình để để dự đoán nữa. Điểm khác biệt của Flow Matching nằm ở chỗ, ta có thể xây dựng một mục tiêu thích hợp cho $u_\theta(t,x)$ mà không cần phải tính tường minh giá trị vector $u(t,x)$ thực sự. Đó là thay vì học flow trên toàn dữ liệu, ta xây dựng các flow cục bộ dựa trên các cặp mẫu $(x_0, x_1)$ và dạy mô hình bắt chước chúng.
 
 ### 4.2. Conditional Flow Matching
 
-Từ công thức về quan hệ giữa $p_t$ và $u_t$ ở (3.3), việc xây dựng $p_t$ và $u_t$ sẽ tương đương với nhau, tức nếu ta xây dựng được $u_t$ thì sẽ dựng được $p_t$ và ngược lại.  
+Từ công thức về quan hệ giữa $p_t$ và $u_t$ ở (3.3), việc xây dựng $p_t$ và $u_t$ sẽ tương đương với nhau, tức nếu ta xây dựng được $u_t$ thì sẽ dựng được $p_t$ và ngược lại.
 
 Trong bài báo Flow Matching For Generative Modeling của Lipman (2023), ông và các cộng sự đã đề xuất một phương pháp để xây dựng flow matching, đó là dựa trên việc xây dựng và kết hợp các đường xác suất (tức probability path) $p_t$ và trường $u_t$ dựa trên xác suất có điều kiện.
 
 #### 4.2.1. Đường xác suất $p_t$ có điều kiện và vector $u_t$ có điều kiện
 
 Nhắc lại đẳng thức (3.3):
+
 $$
 \frac{\partial p_t(x)}{\partial t} = - \nabla \cdot \big( u_t p_t(x ) \big).
 $$
+
 Từ đây ta có thể nhận xét rằng việc xây dựng $p_t$ và $u_t$ sẽ tương đương nhau: Ứng với mỗi $p_t$ có duy nhất một $u_t$ thỏa mãn việc sinh ra $p_t$.
 
 Giả sử ta có một mẫu dữ liệu đích cụ thể $y_1 \sim q(y)$. Ta định nghĩa $p_t(x|y_1)$ là một đường xác suất có điều kiện (conditional probability path) mô tả quá trình biến đổi của biến $x$ theo thời gian $t \in [0, 1]$, thỏa mãn hai biên:
-* Tại thời điểm khởi đầu $t=0$ :  $p_0(x|y_1) = p(x)$, trong đó $p(x)$ là phân phối nguồn (ví dụ: phân phối $\mathcal{N}(x|0, I)$).
-* Tại thời điểm kết thúc $t=1$ :  $p_1(x|y_1)$ là một phân phối đích, tập trung xung quanh mẫu dữ liệu $y_1$ (ví dụ: một phân phối chuẩn với phương sai $\sigma$ rất nhỏ: $\mathcal{N}(x|y_1, \sigma^2 I)$).
+
+- Tại thời điểm khởi đầu $t=0$ : $p_0(x|y_1) = p(x)$, trong đó $p(x)$ là phân phối nguồn (ví dụ: phân phối $\mathcal{N}(x|0, I)$).
+- Tại thời điểm kết thúc $t=1$ : $p_1(x|y_1)$ là một phân phối đích, tập trung xung quanh mẫu dữ liệu $y_1$ (ví dụ: một phân phối chuẩn với phương sai $\sigma$ rất nhỏ: $\mathcal{N}(x|y_1, \sigma^2 I)$).
 
 Tương ứng với mỗi đường xác suất có điều kiện $p_t(x|y_1)$, tồn tại một trường vector có điều kiện $u_t(x|y_1): \mathbb{R}^d \rightarrow \mathbb{R}^d$ đóng vai trò sinh ra flow đó. Dưới điều kiện ta đã biết trước đích đến $x_1 = y_1$ của quá trình chuyển dịch, ta có thể dễ dàng xây dựng các đường xác suất và trường vector tương ứng. Ví dụ giả sử điểm đến tại $t = 1$ là $x_1 = y_1$, ta có thể xây dựng công thức như sau:
 
@@ -425,11 +432,12 @@ $$
 
 Qua các công thức trên ta thấy rằng để tính $u_t$ và $p_t$ trong điều kiện đã biết điểm đến là không khó. Như vậy bài toán bây giờ đặt ra là, làm sao từ các flow có điều kiện này, ta tính ra được flow tổng trên toàn tập dữ liệu. Với đường xác suất tổng quát, từ các đường xác suất có điều kiện này, ta có thể khôi phục lại đường xác suất cận biên (marginal probability path) $p_t(x)$ cho toàn bộ không gian dữ liệu bằng cách lấy tích phân biên qua phân phối dữ liệu $q(y_1)$:
 
-$$p_t(x) 
- = \mathbb{E}_{y_1 \sim q} \left[ p_t(x \mid y_1) \right] 
+$$
+p_t(x)
+ = \mathbb{E}_{y_1 \sim q} \left[ p_t(x \mid y_1) \right]
  = \int p_{t \mid 1}(x|y_1)q(y_1)dy_1
  \tag{4.2}
- $$
+$$
 
 Công thức này xác định $p_t(x)$ bằng cách coi nó là sự tổng hợp của các phân phối xác suất. Đặc biệt tại $t=1$, $p_1(x)$ sẽ có thể xấp xỉ tốt đối với phân phối dữ liệu thực tế $q(x)$ nhờ sự tổng hợp của các phân phối con tập trung quanh từng điểm dữ liệu.
 
@@ -458,13 +466,13 @@ $$
 &= - \nabla \cdot \left(
         \int u_t(x \mid y_1)\,
         \frac{p_t(x \mid y_1) q(y_1)}{p_t(x)}\,
-        p_t(x)\, dy_1 
+        p_t(x)\, dy_1
      \right) \\
 &= - \nabla \cdot \bigg(
         \left[
-            \int 
+            \int
             u_t(x \mid y_1)
-            \frac{p_t(x \mid y_1) q(y_1)}{p_t(x)}\, dy_1 
+            \frac{p_t(x \mid y_1) q(y_1)}{p_t(x)}\, dy_1
         \right]
         p_t(x)
      \bigg) \\
@@ -488,7 +496,7 @@ p_0 = \mathcal{N}([-\mu, 0], I) \quad & \text{và} \quad p_1 = \mathcal{N}([+\mu
 \end{equation}
 $$
 
-Trong hình dưới, 2 phân phối Gauss của ta là 2 cụm điểm ở 2 bên trái phải của ảnh. Các đường nối các điểm giữa chúng là một ví dụ của các đường được tạo nên nhờ vết do $u_t(x|y_1)$ tạo ra khi di chuyển các điểm tương ứng. 
+Trong hình dưới, 2 phân phối Gauss của ta là 2 cụm điểm ở 2 bên trái phải của ảnh. Các đường nối các điểm giữa chúng là một ví dụ của các đường được tạo nên nhờ vết do $u_t(x|y_1)$ tạo ra khi di chuyển các điểm tương ứng.
 
 ![](images/conditional-path-1.png)
 
@@ -496,25 +504,28 @@ Sau đó, ta muốn rằng có thể học được các đường tại biên $
 
 ![](images/conditional-path-2.png)
 
-Trên tinh thần đó, ta thực hiện như sau: Chọn điểm $x_0$ ngẫu nhiên từ $p_0$, sau đó ước lượng $u_t(x_0)$ với $t \in [0,1]$: 
+Trên tinh thần đó, ta thực hiện như sau: Chọn điểm $x_0$ ngẫu nhiên từ $p_0$, sau đó ước lượng $u_t(x_0)$ với $t \in [0,1]$:
 
-$$\begin{equation*}
+$$
+\begin{equation*}
 \begin{split}
-u_t \big( \phi_t(x_0) \big) 
+u_t \big( \phi_t(x_0) \big)
 &= \mathbb{E}_{p_{1 \mid t}}\left[u_t \big( \phi_t(x_0) \mid x_1 \big)\right] \\
 &\approx \frac{1}{n} \sum_{i = 1}^n u_t \big( \phi_t(x_0) \mid x_1^{(i)} \big) \ \text{với } x_1^{(i)} \sim p_{1 \mid t}(x_1 \mid \phi_t(x_0)).
 \end{split}
-\end{equation*}$$
+\end{equation*}
+$$
 
 Trong thực tế, ta không thể biết được cụ thể $p_{1|t}(x_1 \mid x_t)$, nhưng trong bài toán với thiết lập cụ thể này ta lại có biểu thức cần tính này. Do đó, chúng ta có thể trực quan hóa trường vectơ biên $u_t(\phi_t(x_0))$ và các trường vectơ có điều kiện $u_t(\phi_t(x_0) \mid x_1^{(i)})$ cho tất cả các mẫu “dữ liệu” $x_1^{(i)}$, rồi xem chúng khác nhau như thế nào. Điều này được minh hoạ trong hình dưới đây.
 
-|  |  |
-|-------|-------|
-|![](images/marginal-vector-1.png)| ![](images/marginal-vector-2.png)|
+|                                   |                                   |
+| --------------------------------- | --------------------------------- |
+| ![](images/marginal-vector-1.png) | ![](images/marginal-vector-2.png) |
 
 #### 4.2.3. Hàm mất mát
 
 Thay (4.3) vào (4.1), ta được kết quả sau:
+
 $$
 \begin{equation*}
 \mathcal{L}_{\mathrm{CFM}}(\theta) = \mathbb{E}_{t \sim \mathcal{U}[0, 1], y_1 \sim q, x_t \sim p_t(x \mid y_1)}\left[\|
@@ -524,14 +535,16 @@ u_\theta(t, x) - u_t(x \mid y_1) \|^2 \right].
 $$
 
 Ta sẽ chứng minh rằng:
+
 $$
 \begin{equation*}
 \nabla_\theta \mathcal{L}_{\mathrm{FM}}(\theta) = \nabla_\theta \mathcal{L}_{\mathrm{CFM}}(\theta),
-\end{equation*} 
+\end{equation*}
 \tag{4.6}
 $$
 
 Thật vậy, lần lượt triển khai phá bình phương trong mỗi hàm mất mát:
+
 $$
 \|u_\theta(t, x) - u_t(x \mid y_1)\|^2 = \|u_\theta(t, x)\|^2 + \|u_t(x \mid y_1)\|^2 - 2 \langle u_\theta(t, x), u_t(x \mid y_1) \rangle \tag{4.7}
 $$
@@ -541,20 +554,24 @@ $$
 $$
 
 Thay vào công thức của từng hàm, ta sẽ chứng minh:
+
 $$
 \mathbb{E}_{x \sim p_t} ~\langle u_\theta(t, x), u_t(x) = \mathbb{E}_{y_1 \sim q_1, x \sim p_t(x|y_1)} ~\langle u_\theta(t, x), u_t(x \mid y_1) \rangle
 \\
 \mathbb{E}_{p_t} \|u_\theta(t, x)\|^2 = \mathbb{E}_{q_1(y_1) p(x \mid y_1)} \|u_\theta(t, x)\|^2
 $$
+
 Thật vậy:
+
 $$
 \begin{equation*}
 \mathbb{E}_{p_t} \|u_\theta(t, x)\|^2 = \int \|u_\theta(t, x)\|^2 p_t(x \mid y_1) q(y_1) dx d y_1 = \mathbb{E}_{q_1(y_1) p(x \mid y_1)} \|u_\theta(t, x)\|^2
 \end{equation*}
 $$
+
 $$
 \begin{align*}
-    \mathbb{E}_{x \sim p_t} ~\langle u_\theta(t, x), u_t(x) \rangle 
+    \mathbb{E}_{x \sim p_t} ~\langle u_\theta(t, x), u_t(x) \rangle
     &= \int \langle u_\theta(t, x), \int u_t(x|y_1) \frac{p_t(x \mid y_1)q(y_1)}{p_t(x)} dy_1 \rangle p_t(x) dx \\
     &= \int \langle u_\theta(t, x), \int u_t(x \mid y_1) p_t(x \mid y_1)q(y_1) dy_1 \rangle dx \\
     &= \int \int \langle u_\theta(t, x), u_t(x \mid y_1) \rangle p_t(x \mid y_1)q(y_1) dy_1 dx \\
@@ -572,7 +589,7 @@ Mặc dù CFM là một bước tiến lớn giúp việc huấn luyện CNF tr�
 
 Đây là điểm yếu chung của tất cả các mô hình dựa trên phương trình vi phân. Để sinh ra một mẫu dữ liệu mới, mô hình phải giải một phương trình vi phân đi từ thời điểm $t=0$ đến $t=1$. Việc này đòi hỏi sử dụng các cách giải tích phân như Euler hay Runge-Kutta. Quá trình này yêu cầu gọi mạng nơ-ron nhiều lần (hàng chục đến hàng trăm bước) cho mỗi mẫu sinh ra.
 
-2. Vấn đề giao nhau của các đường dẫn 
+2. Vấn đề giao nhau của các đường dẫn
 
 Trong phần cơ bản của CFM, đặc biệt là khi sử dụng Independent Coupling, ghép cặp ngẫu nhiên giữa nguồn $x_0$ và dữ liệu đích $x_1$, sẽ thường xảy ra việc các đường xác suất có điều kiện sẽ đan xen và cắt nhau chằng chịt.
 
@@ -585,10 +602,10 @@ Tuy nhiên, $u(t, x)$ được định nghĩa là kỳ vọng (tích phân) củ
 
 #### 4.3. Coupling
 
-#### 4.4. Discrete Flow Matching
-
+### 4.4. Discrete Flow Matching
 
 ## Tham khảo
+
 1. https://arxiv.org/pdf/2210.02747
 2. https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html
 3. https://arxiv.org/abs/2412.06264
