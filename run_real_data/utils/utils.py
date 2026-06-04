@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from pyteomics import mass
 from spectrum_utils import spectrum
 from spectrum_utils.plot import spectrum as plot_spectrum
+from spectrum_utils.plot import mirror as plot_mirror
 
 from typing import Union
 
@@ -43,33 +44,56 @@ def get_peptide_seq(integer_seq):
 
 def plot_loss_history(
     loss_history,
+    val_loss_history=None,
     title="Loss History",
     prefix="Loss_History",
     smooth_window=None,
 ):
     """
-    Plot training loss history.
+    Plot training/validation loss history.
 
     Args:
-        loss_history (list or array): Danh sách loss theo từng step/epoch.
-        smooth_window (int, optional): Nếu truyền vào, sẽ vẽ thêm đường smooth
-                                       bằng moving average với window này.
+        loss_history (list): train loss history
+        val_loss_history (list, optional): validation loss history
+        smooth_window (int, optional): moving average window
     """
-    plt.figure()
-    plt.plot(loss_history)
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from time import time
+
+    plt.figure(figsize=(8, 5))
+
+    # Train loss
+    plt.plot(loss_history, label="Train Loss")
 
     if smooth_window is not None and smooth_window > 1:
-        import numpy as np
-
-        loss_array = np.array(loss_history)
         kernel = np.ones(smooth_window) / smooth_window
-        smooth_loss = np.convolve(loss_array, kernel, mode="valid")
-        plt.plot(range(smooth_window - 1, len(loss_history)), smooth_loss)
+        smooth_loss = np.convolve(
+            np.array(loss_history),
+            kernel,
+            mode="valid",
+        )
 
-    plt.xlabel("Epoch")
+        plt.plot(
+            range(smooth_window - 1, len(loss_history)),
+            smooth_loss,
+            label=f"Train Smooth ({smooth_window})",
+        )
+
+    # Validation loss
+    if val_loss_history is not None:
+        plt.plot(
+            val_loss_history,
+            label="Validation Loss",
+        )
+
+    plt.xlabel("Log Step")
     plt.ylabel("Loss")
     plt.title(title)
-    plt.savefig(f"{prefix}_{time()}.jpg")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    plt.savefig(f"{prefix}_{time()}.jpg", bbox_inches="tight")
     plt.show()
 
 
@@ -319,4 +343,35 @@ def plot_intensity_spectrum(seq, charge, intensities):
         intensity=intensities,
     )
     plot_spectrum(spec)
+    plt.show()
+
+
+def plot_intensity_mirror(
+    seq,
+    charge,
+    intensities_top,
+    intensities_bottom,
+    label_top="Predicted",
+    label_bottom="Ground Truth",
+):
+    precursor_mz = mass.fast_mass(seq, charge=charge)
+    mzs = calculate_mzs(seq, charge)
+
+    spec_top = spectrum.MsmsSpectrum(
+        identifier=f"{seq}_{charge}_top",
+        precursor_mz=precursor_mz,
+        precursor_charge=charge,
+        mz=mzs,
+        intensity=intensities_top,
+    )
+
+    spec_bot = spectrum.MsmsSpectrum(
+        identifier=f"{seq}_{charge}_bot",
+        precursor_mz=precursor_mz,
+        precursor_charge=charge,
+        mz=mzs,
+        intensity=intensities_bottom,
+    )
+
+    plot_mirror(spec_top, spec_bot)
     plt.show()

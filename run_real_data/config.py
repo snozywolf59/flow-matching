@@ -1,5 +1,4 @@
-"""Configuration for training and evaluation on real data.
-"""
+"""Configuration for training and evaluation on real data."""
 
 import os
 from dotenv import load_dotenv
@@ -13,6 +12,7 @@ TEST_PATH: str = os.getenv("TEST_PATH", "data/test.h5")
 # Preprocessing for spectra
 # "raw" | "logit"
 PREPROCESS_MODE: str = "raw"
+NOISE_TYPE: str = "gaussian"  # "gaussian" | "laplace"
 
 # use for logit mode: clamp intensity in [LOGIT_EPS, 1 - LOGIT_EPS]
 LOGIT_EPS: float = 1e-4
@@ -36,7 +36,7 @@ COND_DROP_PROB: float = 0.1
 # training configuration
 
 EPOCHS: int = 8
-BATCH_SIZE: int = 512
+BATCH_SIZE: int = 1024
 LR: float = 3e-4
 WEIGHT_DECAY: float = 1e-2
 ADAM_EPS: float = 1e-8
@@ -48,11 +48,11 @@ SIGMA: float = 1e-2
 ODE_STEPS: int = 6
 
 # logging while training config
-LOG_EVERY_N_BATCHES: int = 100
+LOG_EVERY_N_BATCHES: int = 256
 
 # Validation config, by pcc and sa on latent and true spectra
-VALIDATE_EVERY_N_LOGS: int = 50
+VALIDATE_EVERY_N_LOGS: int = 1
 
-PRINT_SCORE_EVERY_N_LOGS: int = 1
+PRINT_SCORE_EVERY_N_LOGS: int = 10
 
 VALIDATE_BATCH_SIZE: int = 16

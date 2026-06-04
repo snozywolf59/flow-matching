@@ -1,9 +1,8 @@
-""" Run model training.
+"""Run model training.
 
 All configuration is in config.py. To change model architecture,
 edit models.py and import the desired class here.
 """
-
 
 import math
 import os
@@ -18,6 +17,7 @@ from tqdm.auto import tqdm
 
 import config as C
 from preprocess import Preprocessor, PreprocessMode
+from sampling import SamplingConfig
 from models import DiffusionFlow, HCDFlowResMLP, HCDFlow
 from utils.gen_path import get_xt
 from utils.metrics import pcc, sa
@@ -43,6 +43,12 @@ preprocessor = Preprocessor(
 print(f"[bold cyan]Preprocessor:[/bold cyan] {preprocessor}")
 print(f"[bold cyan]Device:[/bold cyan] {device}")
 
+sampling = SamplingConfig(
+    noise_sampling=C.NOISE_TYPE,
+    ode_steps=C.ODE_STEPS,
+)
+print(f"[bold cyan]Sampling Config:[/bold cyan] {sampling}")
+
 
 # ────────────────────────────────────────────────────────────
 # Helpers
@@ -50,7 +56,7 @@ print(f"[bold cyan]Device:[/bold cyan] {device}")
 def load_charges(path: str) -> np.ndarray:
     with h5py.File(path, "r") as f:
         if C.TRAIN_SAMPLE_SIZE and C.TRAIN_SAMPLE_SIZE > 0:
-            charges_oh = f["precursor_charge_onehot"][:C.TRAIN_SAMPLE_SIZE]
+            charges_oh = f["precursor_charge_onehot"][: C.TRAIN_SAMPLE_SIZE]
         else:
             charges_oh = f["precursor_charge_onehot"][:]
     return np.argmax(charges_oh, axis=1) + 1
@@ -68,7 +74,9 @@ def build_batch(
     raw_seqs = f["sequence_integer"][start:end]
     batch_charges = charges[start:end]
 
-    mask_np = create_batch_fragment_mask_from_peptide(raw_seqs, batch_charges, reshape=reshape)
+    mask_np = create_batch_fragment_mask_from_peptide(
+        raw_seqs, batch_charges, reshape=reshape
+    )
 
     # intensity: [0,1] → encode theo PREPROCESS_MODE
     intensity_01 = torch.tensor(
@@ -151,6 +159,8 @@ print(
 loss_history: list[float] = []
 rolling_buffer: list[float] = []
 
+val_loss_history: list[float] = []
+
 metrics: dict[str, list[float]] = {
     "pcc_latent": [],
     "sa_latent": [],
@@ -158,9 +168,81 @@ metrics: dict[str, list[float]] = {
     "sa_true": [],
 }
 
+
 # ────────────────────────────────────────────────────────────
 # Validation function
 # ────────────────────────────────────────────────────────────
+@torch.no_grad()
+def compute_val_loss(
+    model,
+    h5_path,
+    batch_size,
+    start_idx=0,
+    end_idx=None,
+):
+    model.eval()
+
+    total_loss = 0.0
+    total_samples = 0
+
+    charges = load_charges(h5_path)
+
+    with h5py.File(h5_path, "r") as f:
+
+        num_samples = len(charges)
+        if end_idx is not None:
+            num_samples = min(num_samples, end_idx)
+
+        num_batches = math.ceil((num_samples - start_idx) / batch_size)
+
+        for b in range(num_batches):
+
+            start = b * batch_size
+            end = min((b + 1) * batch_size, num_samples)
+
+            batch = build_batch(
+                f,
+                charges,
+                start,
+                end,
+                False,
+            )
+
+            x1 = batch["intensity_latent"]
+            noise = sampling.sample_noise_like(x1)
+
+            bs = end - start
+
+            t = torch.rand(bs, 1, device=x1.device)
+
+            x_t, target = compute_flow_target(
+                noise,
+                x1,
+                t,
+                batch,
+            )
+
+            u_pred = model(
+                x_t,
+                t,
+                batch["pep_seq"],
+                batch["charge"],
+            )
+
+            loss = masked_mse_loss(
+                u_pred,
+                target,
+                batch["mask"],
+            )
+
+            total_loss += loss.item() * bs
+            total_samples += bs
+
+    model.train()
+
+    return total_loss / total_samples
+
+
 def _run_validation(
     model: torch.nn.Module,
     last_batch: dict,
@@ -207,6 +289,8 @@ def _run_validation(
     model.train()
 
 
+## End of validation function
+
 # ────────────────────────────────────────────────────────────
 # Training
 # ────────────────────────────────────────────────────────────
@@ -234,7 +318,7 @@ with h5py.File(C.TRAIN_PATH, "r") as f:
 
             batch = build_batch(f, charges, start, end, False)
             x1 = batch["intensity_latent"]
-            noise = torch.randn_like(x1)
+            noise = sampling.sample_noise_like(x1)
 
             # # Với sphere mode, noise phải nằm trên S^(d-1)
             # if preprocessor.mode == PreprocessMode.SPHERE:
@@ -269,7 +353,14 @@ with h5py.File(C.TRAIN_PATH, "r") as f:
                 # ── Validate ──────────────────────────────────
                 n_logs = len(loss_history)
                 if n_logs % C.VALIDATE_EVERY_N_LOGS == 0:
-                    _run_validation(model, batch, preprocessor, metrics, n_logs)
+                    #     _run_validation(model, batch, preprocessor, metrics, n_logs)
+                    val_loss = compute_val_loss(
+                        model, C.TEST_PATH, C.BATCH_SIZE, end_idx=8096
+                    )
+                    val_loss_history.append(val_loss)
+                    print(
+                        f"\n[cyan]── Validation loss: {val_loss:.4f} (log #{n_logs}) ──[/cyan]\n"
+                    )
 
 # ────────────────────────────────────────────────────────────
 # Save & Plot
@@ -285,7 +376,9 @@ ckpt_name = (
 torch.save(model.state_dict(), ckpt_name)
 print(f"[bold]Saved:[/bold] {ckpt_name}")
 
-plot_loss_history(loss_history)
+plot_loss_history(loss_history, val_loss_history)
 for key, vals in metrics.items():
     if vals:
-        plot_loss_history(vals, f"{key.upper()}", f"MLP_{key.upper()}_{C.PREPROCESS_MODE}")
+        plot_loss_history(
+            vals, f"{key.upper()}", f"MLP_{key.upper()}_{C.PREPROCESS_MODE}"
+        )
